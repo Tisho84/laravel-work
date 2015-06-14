@@ -81,7 +81,7 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function update(User $user, $profile)
+    public function update(User $user)
     {
         $user->update(Input::all());
 

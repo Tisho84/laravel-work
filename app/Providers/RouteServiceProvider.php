@@ -1,8 +1,10 @@
 <?php namespace App\Providers;
 
+use App\Order;
 use App\User;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider {
 
@@ -25,8 +27,9 @@ class RouteServiceProvider extends ServiceProvider {
 	{
 		parent::boot($router);
 
-		$router->model('users', User::class);
-		$router->model('services', Service::class);
+		$router->model('users', 'App\User');
+		$router->model('services', 'App\Service');
+        $router->model('orders', 'App\Order');
 	}
 
 	/**

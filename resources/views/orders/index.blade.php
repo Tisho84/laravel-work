@@ -20,22 +20,24 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($orders as $order)
-                                <tr>
-                                    <td>{{$order->user->name}}</td>
-                                    <td>{{$order->service->name}}</td>
-                                    <td>{{$order->amount}}</td>
-                                    <td>
-                                        {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
+                            @if(count($orders) > 0)
+                                @foreach($orders as $order)
+                                    <tr>
+                                        <td>{{$order->user->name}}</td>
+                                        <td>{{$order->service->name}}</td>
+                                        <td>{{$order->amount}}</td>
+                                        <td>
+                                            {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 
-                                        <a href="{{url('orders', [$order])}}" class="btn btn-xs btn-warning">details</a>
+                                            <a href="{{url('orders', [$order])}}" class="btn btn-xs btn-warning">details</a>
 
-                                        {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                                            {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
 
-                                        {!! Form::close() !!}
-                                    </td>
-                                </tr>
-                            @endforeach
+                                            {!! Form::close() !!}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                             </tbody>
                         </table>
                     </div>

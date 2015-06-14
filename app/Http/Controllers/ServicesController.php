@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\ServiceRequest;
 use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -37,9 +38,9 @@ class ServicesController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(ServiceRequest $request)
     {
-        Service::create(Input::all());
+        Service::create($request->all());
 
         return redirect('services');
     }

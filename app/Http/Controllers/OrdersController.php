@@ -19,9 +19,7 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        $orders = Order::all();
-        $orders->load('user', 'service');
-
+        $orders = Order::with('user', 'service')->get();
         return view('orders.index', compact('orders'));
     }
 
@@ -45,6 +43,31 @@ class OrdersController extends Controller
     public function store()
     {
         Auth::user()->orders()->save(new Order(Input::all()));
+
+        return redirect('orders');
+    }
+
+
+    /**
+     * @param Order $order
+     * show order
+     * @return \Illuminate\View\View
+     */
+    public function show(Order $order)
+    {
+        $order->load('user', 'service');
+        return view('orders.show', compact('order'));
+    }
+
+    /**
+     * @param Order $order
+     * delete order
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
+    public function destroy(Order $order)
+    {
+        $order->delete();
 
         return redirect('orders');
     }
