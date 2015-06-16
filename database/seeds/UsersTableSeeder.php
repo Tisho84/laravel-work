@@ -20,9 +20,13 @@ class UsersTableSeeder extends Seeder
 
         foreach (range(1, 20) as $index) {
             User::create([
-                'name'     => $faker->name,
-                'email'    => $faker->email,
-                'password' => Hash::make('123456')
+                'first_name' => $faker->firstName,
+                'last_name' => $faker->lastName,
+                'email' => $faker->email,
+                'phone' => $faker->phoneNumber,
+                'username' => $faker->userName,
+                'active' => $faker->boolean(30),
+                'password' => Hash::make('123456'),
             ]);
         }
     }

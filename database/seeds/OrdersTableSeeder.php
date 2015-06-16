@@ -1,7 +1,10 @@
 <?php
 
+use App\Address;
 use App\Order;
-use App\Service;
+use App\OrderStatus;
+use App\Payment;
+use App\Product;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,16 +20,24 @@ class OrdersTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker    = Factory::create();
-        $users    = User::lists('id');
-        $services = Service::lists('id');
-
-        foreach (range(1, 60) as $index) {
+        $faker = Factory::create();
+        $users = User::lists('id');
+        $orderStatuses = OrderStatus::lists('id');
+        $addresses = Address::lists('id');
+        $payments = Payment::lists('id');
+        foreach (range(1, 30) as $index) {
             Order::create([
                 'user_id'    => $faker->randomElement($users),
-                'service_id' => $faker->randomElement($services),
-                'amount'     => $faker->randomFloat(2, 36, 500)
+                'address_id' => $addresses[$index],
+                'payment_id' => $payments[$index],
+                'status_id'  => $faker->randomElement($orderStatuses),
+                'processed_on' => $faker->time(),
+                'shipped_on' => $faker->time(),
+                'expected_delivery_on' => $faker->time(),
+                'delivered_on' => $faker->time(),
             ]);
+
+
         }
     }
 
