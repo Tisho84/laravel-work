@@ -24,11 +24,15 @@ class ProfileUpdateRequest extends Request
     public function rules()
     {
         $id = Auth::user()->id;
+        //todo if is admin ignore all unique so he can change whatever he wants
         return [
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users,email,'.$id,
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'username' => 'required|unique:users,' . $id,
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'max:255|regex:/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/',
             'password' => 'confirmed'
         ];
     }
-
+    
 }

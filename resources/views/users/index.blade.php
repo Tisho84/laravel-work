@@ -15,16 +15,22 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Username</th>
                                 <th>Email</th>
+                                <th>Full name</th>
+                                <th>Phone</th>
+                                <th>Active</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($users as $user)
                                 <tr>
-                                    <td>{{$user->name}}</td>
-                                    <td>{{$user->email}}</td>
+                                    <td>{{ $user->username }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->first_name . ' ' . $user->last_name }}</td>
+                                    <td>{{ $user->phone }}</td>
+                                    <td>{{ $user->active == 1 ? 'yes': 'no'}}</td>
                                     <td>
                                         {!! Form::open(['url' => "users/{$user->id}", 'method' => 'delete']) !!}
 

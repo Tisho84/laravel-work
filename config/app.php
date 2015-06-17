@@ -136,7 +136,7 @@ return [
         'App\Providers\ConfigServiceProvider',
         'App\Providers\EventServiceProvider',
         'App\Providers\RouteServiceProvider',
-
+        'Barryvdh\Debugbar\ServiceProvider',
 
     ],
     /*
@@ -186,6 +186,7 @@ return [
         'View'      => 'Illuminate\Support\Facades\View',
         'Html'      => 'Illuminate\Html\HtmlFacade',
         'Form'      => 'Illuminate\Html\FormFacade',
+        'Debugbar' => 'Barryvdh\Debugbar\Facade',
 
     ],
 

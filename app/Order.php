@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model {
 
-    protected $fillable = ['service_id', 'amount'];
+    //protected $fillable = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status_id'];
 
     public $timestamps = false;
 

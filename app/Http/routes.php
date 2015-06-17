@@ -21,7 +21,7 @@ Route::controllers([
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('users', 'UsersController');
-    Route::resource('services', 'ServicesController');
+    Route::resource('products', 'ProductsController');
     Route::resource('orders', 'OrdersController');
     Route::get('profile', [
         'as'   => 'viewProfile',
@@ -31,4 +31,5 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'updateProfile',
         'uses' => 'UsersController@updateProfile'
     ]);
+    Route::resource('categories', 'CategoriesControllwe');
 });

@@ -16,6 +16,7 @@
                 <li><a href="{{ url('/') }}">Home</a></li>
                 @if(Auth::user())
                     <li><a href="{{ url('users') }}">Users</a></li>
+                    <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
                     <li><a href="{{ url('services') }}">Services</a></li>
                     <li><a href="{{ url('orders') }}">Orders</a></li>
                 @endif
@@ -29,7 +30,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             <img src="//www.gravatar.com/avatar/{{md5(Auth::user()->email)}}}?s=30" class="img-circle">
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                            {{ Auth::user()->username }} <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{{ route('viewProfile') }}">Profile</a></li>

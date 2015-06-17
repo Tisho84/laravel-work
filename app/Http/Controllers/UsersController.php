@@ -4,8 +4,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UserCreateRequest;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
@@ -40,7 +40,7 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(UserCreateRequest $request)
     {
         User::create(Input::all());
 
@@ -57,9 +57,10 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('orders');
-
-        return view('users.show', compact('user'));
+        $user->load('orders');//, 'orders.products');
+        $orders = $user->orders()->get();
+        
+        return view('users.show', compact('user', 'orders'));
     }
 
     /**
@@ -81,9 +82,15 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function update(User $user)
+    public function update(User $user, ProfileUpdateRequest $request)
     {
-        $user->update(Input::all());
+        $input = Input::all();
+        if($input['active'] == 'on') {
+            $input['active'] = 1;
+        } else {
+            $input['active'] = 0;
+        }
+        $user->update($input);
 
         return redirect('users');
     }
