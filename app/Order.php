@@ -15,12 +15,14 @@ class Order extends Model {
 
     public function address()
     {
-        return $this->hasOne('App\Address');
+        return $this->belongsTo('App\Address');
+        //return $this->hasOne('App\Address');
     }
 
     public function payment()
     {
-        return $this->hasOne('App\Payment');
+        return $this->belongsTo('App\Payment');
+        //return $this->hasOne('App\Payment');
     }
 
     public function status()
@@ -30,7 +32,7 @@ class Order extends Model {
 
     public function products()
     {
-        return $this->belongsToMany('App\Product', 'order_products');
+        return $this->belongsToMany('App\Product', 'order_products')->withPivot('quantity');
     }
 
 //    public function service()

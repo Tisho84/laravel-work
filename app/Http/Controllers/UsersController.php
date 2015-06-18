@@ -86,11 +86,7 @@ class UsersController extends Controller
     {
         dd($user);
         $input = Input::all();
-        if($input['active'] == 'on') {
-            $input['active'] = 1;
-        } else {
-            $input['active'] = 0;
-        }
+        $input['active'] = $input['active'] == 'on' ? 1: 0;
         $user->update($input);
 
         return redirect('users');

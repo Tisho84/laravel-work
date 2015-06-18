@@ -41,4 +41,5 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'payments.show',
         'uses' => 'PaymentsController@show'
     ]);
+    Route::resource('products', 'ProductsController');
 });
