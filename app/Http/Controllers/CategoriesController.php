@@ -1,8 +1,10 @@
 <?php namespace App\Http\Controllers;
 
+use App\Category;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\NameRequest;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller {
@@ -14,7 +16,9 @@ class CategoriesController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		$categories = Category::all();
+
+        return view('categories.index', compact('categories'));
 	}
 
 	/**
@@ -24,17 +28,22 @@ class CategoriesController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		return view('categories.create');
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @param Category $category
+     * @return Response
+     */
+	public function store(NameRequest $request)
 	{
-		//
+        //$this->validate($request, Category::$rules);
+        Category::create($request->all());
+
+        return redirect('categories');
 	}
 
 	/**
@@ -43,9 +52,12 @@ class CategoriesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show(Category $category)
 	{
-		//
+		$category->load('products');
+        $products = $category->products()->get();
+
+        return view('categories.show', compact('category', 'products'));
 	}
 
 	/**
@@ -54,9 +66,9 @@ class CategoriesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Category $category)
 	{
-		//
+		return view('categories.edit', compact('category'));
 	}
 
 	/**
@@ -65,9 +77,11 @@ class CategoriesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Category $category, NameRequest $request)
 	{
-		//
+		$category->update($request->all());
+
+        return redirect('categories')->with('success', 'Category updated!');
 	}
 
 	/**
@@ -76,9 +90,11 @@ class CategoriesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Category $category)
 	{
-		//
+        $category->delete();
+
+        return redirect('categories');
 	}
 
 }

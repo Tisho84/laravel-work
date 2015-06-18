@@ -10,6 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
@@ -31,5 +32,13 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'updateProfile',
         'uses' => 'UsersController@updateProfile'
     ]);
-    Route::resource('categories', 'CategoriesControllwe');
+    Route::resource('categories', 'CategoriesController');
+    Route::get('payments', [
+        'as' => 'payments.index',
+        'uses' => 'PaymentsController@index']
+    );
+    Route::get('payments/{id}/show', [
+        'as' => 'payments.show',
+        'uses' => 'PaymentsController@show'
+    ]);
 });

@@ -82,8 +82,9 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function update(User $user, ProfileUpdateRequest $request)
+    public function update(User $user)
     {
+        dd($user);
         $input = Input::all();
         if($input['active'] == 'on') {
             $input['active'] = 1;

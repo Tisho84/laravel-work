@@ -18,7 +18,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var string
      */
     protected $table = 'users';
-
+    public static $rules = [
+        'phone' => '/^(\d[\s-]?)?[\(\[\s-]{0,2}?\d{3}[\)\]\s-]{0,2}?\d{3}[\s-]?\d{4}$/i'
+    ];
     /**
      * The attributes that are mass assignable.
      *

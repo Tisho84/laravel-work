@@ -1,6 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileUpdateRequest extends Request
@@ -28,9 +29,9 @@ class ProfileUpdateRequest extends Request
         return [
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'username' => 'required|unique:users,' . $id,
+            'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'max:255|regex:/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/',
+            'phone' => 'max:255|regex:' . User::$rules['phone'],
             'password' => 'confirmed'
         ];
     }

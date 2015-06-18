@@ -1,6 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use App\User;
 
 class UserCreateRequest extends Request {
 
@@ -26,7 +27,7 @@ class UserCreateRequest extends Request {
             'last_name' => 'required|max:255',
             'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
-            'phone' => 'max:255|regex:/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/',
+            'phone' => 'max:255|regex:' . User::$rules['phone'],
             'password' => 'required|confirmed|min:6'
 		];
 	}

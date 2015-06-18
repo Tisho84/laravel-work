@@ -17,6 +17,7 @@
                 @if(Auth::user())
                     <li><a href="{{ url('users') }}">Users</a></li>
                     <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
+                    <li>{!! Html::link( route('payments.index'), 'Payments') !!}</li>
                     <li><a href="{{ url('services') }}">Services</a></li>
                     <li><a href="{{ url('orders') }}">Orders</a></li>
                 @endif
