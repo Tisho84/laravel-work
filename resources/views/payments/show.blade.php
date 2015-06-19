@@ -26,15 +26,13 @@
                             <div class="col-md-6">Amount</div>
                             <div class="col-md-6">{{ $payment->amount }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">Paid on</div>
-                            <div class="col-md-6">
-                                @if(isset($payment->paid_on))
+                        @if($payment->type->info)
+                            <div class="row">
+                                <div class="col-md-6">Paid on</div>
+                                <div class="col-md-6">
                                     {{ $payment->paid_on }}
-                                @endif
+                                </div>
                             </div>
-                        </div>
-                        @if($payment->type->name == 'credit card' || $payment->type->id == 2)
                             <div class="row">
                                 <div class="col-md-6">Brand</div>
                                 <div class="col-md-6">{{ $payment->brand }}</div>

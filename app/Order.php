@@ -8,6 +8,8 @@ class Order extends Model {
 
     public $timestamps = false;
 
+    protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on'];
+
     public function user()
     {
         return $this->belongsTo('App\User');

@@ -33,10 +33,10 @@
                                     <td>{{ $product->available? 'Yes' : 'No' }}</td>
                                     <td>{{ $product->active? 'Yes' : 'No' }}</td>
                                     <td>
-                                        {!! Form::open(['url' => "products/{$product->id}", 'method' => 'delete']) !!}
+                                        {!! Form::open(['method' => 'DELETE', 'route' => ['products.destroy', $product]]) !!}
 
-                                        <a href="{{url('products', [$product])}}" class="btn btn-xs btn-warning">details</a>
-                                        <a href="{{url("products/{$product->id}/edit")}}" class="btn btn-xs btn-success">edit</a>
+                                        <a href="{{ route('products.show', [$product]) }}" class="btn btn-xs btn-warning">details</a>
+                                            <a href="{{ route('products.edit', [$product->id]) }}" class="btn btn-xs btn-success">edit</a>
 
                                         {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
 

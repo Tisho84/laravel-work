@@ -7,6 +7,8 @@
 
 @include('partials.messages.success')
 @include('partials.messages.errors')
+@include('partials.messages.error')
+
 @yield('content')
 
 @section('js')

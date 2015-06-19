@@ -20,7 +20,8 @@
 </div>
 <div class='form-group'>
     {!! Form::label('active', 'Active', ['class' => 'control-label']) !!}
-    {!! Form::checkbox('active', null, ['class' => 'form-control']) !!}
+    {!! Form::hidden('active', 0) !!}
+    {!! Form::checkbox('active', 1, ['class' => 'form-control']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('password', 'Password', ['class' => 'control-label']) !!}

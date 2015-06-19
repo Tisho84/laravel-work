@@ -6,7 +6,7 @@ class Product extends Model {
 
 	protected $table = 'products';
 
-    protected $fillable = array('name', 'available', 'quantity', 'active', 'category_id');
+    protected $fillable = array('name', 'available', 'quantity', 'active', 'category_id', 'description');
 
     public function category()
     {

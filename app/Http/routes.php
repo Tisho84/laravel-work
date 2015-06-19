@@ -10,7 +10,9 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
+Route::get('/test', function(){
+   return Hash::make('123456');
+});
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
@@ -41,5 +43,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'payments.show',
         'uses' => 'PaymentsController@show'
     ]);
+
     Route::resource('products', 'ProductsController');
+    Route::resource('statuses', 'OrderStatusesController');
+    Route::group(['prefix' => 'types'], function () {
+        Route::resource('address', 'AddressTypesController');
+        Route::resource('payment', 'PaymentTypesController');
+    });
 });

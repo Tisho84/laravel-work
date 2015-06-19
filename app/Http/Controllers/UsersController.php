@@ -42,7 +42,7 @@ class UsersController extends Controller
      */
     public function store(UserCreateRequest $request)
     {
-        User::create(Input::all());
+        User::create($request->all());
 
         return redirect('users');
     }
@@ -82,9 +82,8 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function update(User $user)
+    public function update(User $user, ProfileUpdateRequest $request)
     {
-        dd($user);
         $input = Input::all();
         $input['active'] = $input['active'] == 'on' ? 1: 0;
         $user->update($input);

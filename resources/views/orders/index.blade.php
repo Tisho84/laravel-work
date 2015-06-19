@@ -14,18 +14,23 @@
                             <thead>
                             <tr>
                                 <th>Client</th>
-                                <th>Service</th>
-                                <th>Amount</th>
-                                <th></th>
+                                <th>Products</th>
+                                <th>Status</th>
+                                <th>Ordered on</th>
                             </tr>
                             </thead>
                             <tbody>
                             @if(count($orders) > 0)
                                 @foreach($orders as $order)
                                     <tr>
-                                        <td>{{$order->user->name}}</td>
-                                        <td>{{$order->service->name}}</td>
-                                        <td>{{$order->amount}}</td>
+                                        <td>{{ $order->user->first_name . ' ' . $order->user->last_name }}</td>
+                                        <td>
+                                            @foreach($order->products as $product)
+                                                {{ $product->name . '(' . $product->pivot->quantity . ')' }},
+                                            @endforeach
+                                        </td>
+                                        <td>{{ $order->status->name }}</td>
+                                        <td>{{ $order->processed_on }}</td>
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 

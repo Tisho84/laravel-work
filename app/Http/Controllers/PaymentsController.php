@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Payment;
+use App\PaymentType;
 use Illuminate\Http\Request;
 
 class PaymentsController extends Controller {
@@ -21,19 +22,12 @@ class PaymentsController extends Controller {
     /*
      *  Show payment
      */
-    public function show($id) {
+    public function show($id)
+    {
         $payment = Payment::with(
-                'order.user', 'type', 'order.products', 'order.status','order.products.category'
-            )->findOrFail($id);
-        if(count($payment->order->products()))
-        {
-            foreach($payment->order->products()->get() as $product) 
-            {
-                //dd($product->toArray());
-            }
-        }
-        //dd($payment->toArray());
+            'order.user', 'type', 'order.products', 'order.status', 'order.products.category'
+        )->findOrFail($id);
+
         return view('payments.show', compact('payment'));
     }
-
 }

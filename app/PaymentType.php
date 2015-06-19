@@ -8,7 +8,7 @@ class PaymentType extends Model {
 
     public $timestamps = false;
 
-    protected $fillable = array('name');
+    protected $fillable = array('name', 'info');
 
     public function payments()
     {

@@ -22,8 +22,8 @@ class ProductRequest extends Request {
 	public function rules()
 	{
 		return [
-			'category' => 'required|exists:categories,id',
-            'name' => 'required|max:255|unique:products,name',
+			'category_id' => 'required|exists:categories,id',
+            'name' => 'required|max:255|unique:products,name,' . Request::input('id'),
             'description' => 'max:255',
             'quantity' => 'required|digits_between:1,1000',
             'available' => 'boolean',

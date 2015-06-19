@@ -19,7 +19,7 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('user', 'service')->get();
+        $orders = Order::with('user', 'products', 'status')->get();
         return view('orders.index', compact('orders'));
     }
 

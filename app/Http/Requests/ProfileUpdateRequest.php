@@ -3,6 +3,7 @@
 use App\Http\Requests\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 
 class ProfileUpdateRequest extends Request
 {
@@ -25,6 +26,9 @@ class ProfileUpdateRequest extends Request
     public function rules()
     {
         $id = Auth::user()->id;
+        if(Request::get('id')) {
+            $id = Request::get('id');
+        }
         //todo if is admin ignore all unique so he can change whatever he wants
         return [
             'first_name' => 'required|max:255',

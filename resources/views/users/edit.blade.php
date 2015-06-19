@@ -13,6 +13,7 @@
                     <div class="panel-body">
                         {!! Form::model($user, ['route' => ['users.update', $user->id], 'method' => 'put']) !!}
                             @include('users.form', ['button' => 'Update'])
+                            {!! Form::hidden('id', $user->id) !!}
                         {!! Form::close() !!}
                     </div>
                 </div>

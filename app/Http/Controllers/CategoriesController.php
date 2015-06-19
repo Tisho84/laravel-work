@@ -43,7 +43,7 @@ class CategoriesController extends Controller {
         //$this->validate($request, Category::$rules);
         Category::create($request->all());
 
-        return redirect('categories');
+        return redirect('categories')->with('success', 'Category added !');
 	}
 
 	/**
