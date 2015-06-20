@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\ProductRequest;
+use App\Order;
 use App\Product;
 use App\Category;
 use Illuminate\Database\QueryException;
@@ -29,7 +30,7 @@ class ProductsController extends Controller {
 	 */
 	public function create()
 	{
-        $categories = Category::selectCategories();
+        $categories = Category::lists('name', 'id');
         
 		return view('products.create', compact('categories'));
 	}
@@ -65,7 +66,8 @@ class ProductsController extends Controller {
 	 */
 	public function edit(Product $product)
 	{
-        $categories = Category::selectCategories();
+        $categories = Category::lists('name', 'id');
+
 		return view('products.edit', compact('product', 'categories'));
 	}
 

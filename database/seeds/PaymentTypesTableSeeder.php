@@ -24,7 +24,7 @@ class PaymentTypesTableSeeder extends Seeder
         foreach($types as $type) {
             PaymentType::create([
                 'name' => $type['name'],
-                'card_info' => $type['card_info']
+                'info' => $type['card_info']
             ]);
         }
     }

@@ -14,11 +14,11 @@ class AddAddressIdAndPaymentIdToOrdersTable extends Migration {
 	{
 		Schema::table('orders', function(Blueprint $table)
 		{
-            $table->integer('address_id')->unsigned();
+            $table->integer('address_id')->unsigned()->nullable();
             $table->foreign('address_id')
                 ->references('id')->on('addresses');
 
-            $table->integer('payment_id')->unsigned();
+            $table->integer('payment_id')->unsigned()->nullable();
             $table->foreign('payment_id')
                 ->references('id')->on('payments');
 		});

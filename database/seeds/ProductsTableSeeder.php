@@ -15,9 +15,9 @@ class ProductsTableSeeder extends Seeder
         foreach (range(1, 50) as $index) {
             Product::create([
                 'name' => $faker->name,
-                'available' => $faker->boolean(70),
+                'available' => $faker->boolean(85),
                 'quantity' => $faker->numberBetween(0, 100),
-                'active' => $faker->boolean(30),
+                'active' => $faker->boolean(85),
                 'category_id' => $faker->randomElement($categories),
                 'description' => $faker->sentence
             ]);

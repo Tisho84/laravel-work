@@ -13,6 +13,7 @@
 Route::get('/test', function(){
    return Hash::make('123456');
 });
+
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
@@ -26,6 +27,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('users', 'UsersController');
     Route::resource('products', 'ProductsController');
     Route::resource('orders', 'OrdersController');
+    Route::get('orders/categories/{id}', 'OrdersController@getProductsByCategory');
+    Route::get('orders/{order}/payment/type/{id}', 'OrderPaymentController@getPaymentType');
+
     Route::get('profile', [
         'as'   => 'viewProfile',
         'uses' => 'UsersController@viewProfile'
@@ -46,6 +50,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('products', 'ProductsController');
     Route::resource('statuses', 'OrderStatusesController');
+
+    Route::resource('orders.address', 'AddressController');
+    Route::resource('orders.payment', 'OrderPaymentController');
+
     Route::group(['prefix' => 'types'], function () {
         Route::resource('address', 'AddressTypesController');
         Route::resource('payment', 'PaymentTypesController');

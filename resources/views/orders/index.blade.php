@@ -30,7 +30,7 @@
                                             @endforeach
                                         </td>
                                         <td>{{ $order->status->name }}</td>
-                                        <td>{{ $order->processed_on->diffForHumans() }}</td>
+                                        <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 

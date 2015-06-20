@@ -4,11 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model {
 
-    //protected $fillable = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status_id'];
+    protected $fillable = ['user_id', 'processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status_id'];
 
-    public $timestamps = false;
-
-    protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on'];
+    protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'created_at', 'updated_at'];
 
     public function user()
     {

@@ -1,11 +1,16 @@
 <?php namespace App\Http\Controllers;
 
+use App\AddressType;
+use App\Category;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Order;
-use App\Service;
+use App\PaymentType;
+use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
@@ -30,9 +35,20 @@ class OrdersController extends Controller
      */
     public function create()
     {
+        $select = ['-- Select --'];
+        $categories = Category::lists('name', 'id');
         $products = Product::lists('name', 'id');
+        $products = array_merge($select, $products);
+        $categories = array_merge($select, $categories);
 
-        return view('orders.create', compact('services'));
+        $order = Order::create([
+            'user_id' => Auth::user()->id,
+            'address_id' => null,
+            'payment_id' => null,
+            'status_id' => 1,
+        ]);
+
+        return view('orders.create', compact('products', 'categories', 'order'));
     }
 
     /**
@@ -40,11 +56,32 @@ class OrdersController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        Auth::user()->orders()->save(new Order(Input::all()));
+        if($request->ajax()) {
+            $product = Input::get('product');
+            $quantity = Input::get('quantity');
+            $product = Product::where('id', $product)
+                ->where('available', '=', 1)
+                ->where('active', '=', 1)
+                ->first();
+            $code = 200;
+            $message = 'Product added successfully to cart';
+            if ($product) {
+                if ($product->quantity > $quantity) {
+                    $order = Order::find(Input::get('order'));
+                    $order->products()->attach($product, ['quantity' => $quantity]);
+                } else {
+                    $message = 'reduce quantity';
+                    $code = 400;
+                }
+            } else {
+                $message = 'product is not available or active';
+                $code = 400;
+            }
 
-        return redirect('orders');
+            return response()->json(['message' => $message], $code);
+        }
     }
 
 
@@ -70,6 +107,17 @@ class OrdersController extends Controller
         $order->delete();
 
         return redirect('orders');
+    }
+
+    /**
+     * get products by selected category used with ajax
+     * @param $id
+     * @return mixed
+     */
+    public function getProductsByCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        return $category->products()->lists('name', 'id');
     }
 
 }
