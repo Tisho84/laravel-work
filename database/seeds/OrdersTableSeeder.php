@@ -31,10 +31,10 @@ class OrdersTableSeeder extends Seeder
                 'address_id' => $addresses[$index],
                 'payment_id' => $payments[$index],
                 'status_id'  => $faker->randomElement($orderStatuses),
-                'processed_on' => $faker->time(),
-                'shipped_on' => $faker->time(),
-                'expected_delivery_on' => $faker->time(),
-                'delivered_on' => $faker->time(),
+                'processed_on' => $faker->unixTime,
+                'shipped_on' => $faker->unixTime,
+                'expected_delivery_on' => $faker->unixTime,
+                'delivered_on' => $faker->unixTime,
             ]);
 
 

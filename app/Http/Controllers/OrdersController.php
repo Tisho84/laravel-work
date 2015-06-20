@@ -30,7 +30,7 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        $services = Service::lists('name', 'id');
+        $products = Product::lists('name', 'id');
 
         return view('orders.create', compact('services'));
     }
