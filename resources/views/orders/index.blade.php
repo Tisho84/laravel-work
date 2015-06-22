@@ -34,7 +34,7 @@
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 
-                                            <a href="{{url('orders', [$order])}}" class="btn btn-xs btn-warning">details</a>
+                                            <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
 
                                             {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
 

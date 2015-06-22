@@ -28,8 +28,14 @@
                             {!! Form::label('zip', 'Zip', ['class' => 'control-label']) !!}
                             {!! Form::text('zip', null, ['class' => 'form-control']) !!}
                         </div>
-                        {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
+                            </div>
+                            <div class="col-md-6">
+                                {!! Html::link(route('orders.payment.create', [$order->id]), 'set payment', ['class' => 'btn btn-default']) !!}
+                            </div>
+                        </div>
                         {!! Form::close() !!}
                     </div>
                 </div>

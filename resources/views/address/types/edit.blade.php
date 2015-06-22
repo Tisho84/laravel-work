@@ -8,7 +8,7 @@
                     <div class="panel-heading">Address Type</div>
 
                     <div class="panel-body">
-                        {!! Form::model($type, ['url' => 'types/address/' . $type->id, 'method' => 'put']) !!}
+                        {!! Form::model($type, ['url' => 'types/addresses/' . $type->id, 'method' => 'put']) !!}
                             @include('partials.simple_create', ['button' => 'Update', 'text' => 'Address Type', 'field' => 'name'])
                         {!! Form::close() !!}
                     </div>

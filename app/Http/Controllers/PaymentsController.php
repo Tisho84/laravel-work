@@ -28,6 +28,10 @@ class PaymentsController extends Controller {
             'order.user', 'type', 'order.products', 'order.status', 'order.products.category'
         )->findOrFail($id);
 
+        if(!$payment->order) {
+            return redirect()->back();
+        }
+
         return view('payments.show', compact('payment'));
     }
 }

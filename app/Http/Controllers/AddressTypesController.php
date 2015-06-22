@@ -39,7 +39,7 @@ class AddressTypesController extends Controller {
 	public function store(NameRequest $request)
 	{
         AddressType::create($request->all());
-        return redirect('/types/address')->with('success', 'Address type created');
+        return redirect('/types/addresses')->with('success', 'Address type created');
 	}
 
 	/**
@@ -62,7 +62,7 @@ class AddressTypesController extends Controller {
 	public function update(AddressType $type, NameRequest $request)
 	{
 		$type->update($request->all());
-        return redirect('/types/address')->with('success', 'Address type updated');
+        return redirect('/types/addresses')->with('success', 'Address type updated');
 	}
 
     /**
@@ -77,9 +77,9 @@ class AddressTypesController extends Controller {
         try {
             $type->delete();
         } catch(QueryException $e) {
-            return redirect('/types/address')->with('error', 'Address type cant be deleted, because its been already been used !');
+            return redirect('/types/addresses')->with('error', 'Address type cant be deleted, because its been already been used !');
         }
-        return redirect('/types/address');
+        return redirect('/types/addresses');
 	}
 
 }

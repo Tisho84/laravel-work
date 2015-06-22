@@ -8,7 +8,7 @@
                     <div class="panel-heading">Address Type</div>
 
                     <div class="panel-body">
-                        {!! Form::open(['url' => 'types/address', 'method' => 'post']) !!}
+                        {!! Form::open(['url' => 'types/addresses', 'method' => 'post']) !!}
                             @include('partials.simple_create', ['button' => 'Save', 'text' => 'Address Type', 'field' => 'name'])
                         {!! Form::close() !!}
                     </div>

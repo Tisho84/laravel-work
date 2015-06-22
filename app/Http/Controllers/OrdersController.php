@@ -24,6 +24,7 @@ class OrdersController extends Controller
      */
     public function index()
     {
+        //todo delete all address and payment = null, and orders() == 0
         $orders = Order::with('user', 'products', 'status')->get();
         return view('orders.index', compact('orders'));
     }
@@ -92,7 +93,8 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load('user', 'service');
+
+       // $order->load('user', 'products', 'address', 'payment')->get();
         return view('orders.show', compact('order'));
     }
 

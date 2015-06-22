@@ -55,7 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('orders.payment', 'OrderPaymentController');
 
     Route::group(['prefix' => 'types'], function () {
-        Route::resource('address', 'AddressTypesController');
+        Route::resource('addresses', 'AddressTypesController');
         Route::resource('payment', 'PaymentTypesController');
     });
 });
