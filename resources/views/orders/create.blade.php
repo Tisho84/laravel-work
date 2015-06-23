@@ -21,13 +21,16 @@
                             {!! Form::text('quantity', null, ['class' => 'form-control']) !!}
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <button type="button" onclick="addOrder()" class="btn">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </button>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 {!! Html::link(route('orders.address.create', [$order->id]), 'set address', ['class' => 'btn btn-default']) !!}
+                            </div>
+                            <div class="col-md-4">
+                                {!! Html::link(route('orders.payment.create', [$order->id]), 'set payment', ['class' => 'btn btn-default']) !!}
                             </div>
                         </div>
 

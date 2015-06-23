@@ -19,9 +19,12 @@ class OrderPaymentController extends Controller {
 	 */
 	public function create(Order $order)
 	{
-        $payments = PaymentType::lists('name', 'id');
-        $payments = array_merge([' -- Select -- '], $payments);
-		return view('orders.payment', compact('order', 'payments'));
+        if($order->payment !== null) {
+            return redirect(route('orders.payment.edit', [$order->id, $order->payment->id]));
+        }
+        $types = PaymentType::lists('name', 'id');
+        $types = array_merge([' -- Select -- '], $types);
+		return view('payments.create', compact('order', 'types'));
 	}
 
 	/**
@@ -33,8 +36,7 @@ class OrderPaymentController extends Controller {
 	{
         $this->validate($request, Payment::$rules['id']);
         $input = $request->all();
-		$type = PaymentType::findOrFail($input['payment_type']);
-        $input['type_id'] = $input['payment_type'];
+        $type = PaymentType::findOrFail($input['type_id']);
         if($type->info) {
             $this->validate($request, Payment::$rules['info']);
         }
@@ -50,9 +52,11 @@ class OrderPaymentController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
-	{
-		//
+	public function edit(Order $order, Payment $payment)
+    {
+        $types = PaymentType::lists('name', 'id');
+        $types = array_merge([' -- Select -- '], $types);
+        return view('payments.edit', compact('order', 'payment', 'types'));
 	}
 
 	/**
@@ -61,9 +65,15 @@ class OrderPaymentController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
-	{
-		//
+	public function update(Order $order, Payment $payment, Request $request)
+    {
+        $this->validate($request, Payment::$rules['id']);
+        $input = $request->all();
+        $input['type_id'] = $input['payment_type'];
+        if($payment->type->info) {
+            $this->validate($request, Payment::$rules['info']);
+        }
+        return 'here';
 	}
 
     /**

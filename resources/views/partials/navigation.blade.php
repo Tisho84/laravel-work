@@ -22,7 +22,7 @@
                         <ul class="dropdown-menu">
                             <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
                             <li>{!! Html::link( url('/types/addresses'), 'Address Type' ) !!}</li>
-                            <li>{!! Html::link( url('/types/payment'), 'Payment Type' ) !!}</li>
+                            <li>{!! Html::link( url('/types/payments'), 'Payment Type' ) !!}</li>
                             <li>{!! Html::link( route('statuses.index'), 'Order Status' ) !!}</li>
                         </ul>
                     </li>

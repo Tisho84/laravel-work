@@ -8,7 +8,7 @@
                     <div class="panel-heading">Payment Type</div>
 
                     <div class="panel-body">
-                        {!! Form::model($type, ['url' => 'types/payment/' . $type->id, 'method' => 'put']) !!}
+                        {!! Form::model($type, ['url' => 'types/payments/' . $type->id, 'method' => 'put']) !!}
                             @include('payments.types.form', ['button' => 'Update', 'text' => 'Payment Type', 'field' => 'name'])
                         {!! Form::close() !!}
                     </div>

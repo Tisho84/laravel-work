@@ -27,9 +27,13 @@ class AddressController extends Controller {
 	 * @return Response
 	 */
 	public function create(Order $order)
-	{
+    {
+        if($order->address !== null) {
+            return redirect(route('orders.address.edit', [$order, $order->address_id]));
+        }
         $types = AddressType::lists('name', 'id');
-        return view('orders.address', compact('order', 'types'));
+        $types = array_merge([' -- Select -- '], $types);
+        return view('address.create', compact('order', 'types'));
 	}
 
 	/**
@@ -52,7 +56,10 @@ class AddressController extends Controller {
 	 */
 	public function edit(Order $order, Address $address)
 	{
-		dd($address->toArray());
+
+        $types = AddressType::lists('name', 'id');
+        $types = array_merge([' -- Select -- '], $types);
+		return view('address.edit', compact('order', 'address', 'types'));
 	}
 
 	/**
@@ -61,9 +68,10 @@ class AddressController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Order $order, Address $address, AddressRequest $request)
 	{
-		//
+        //todo update
+		return 'here';
 	}
 
 	/**

@@ -40,7 +40,7 @@ class PaymentTypesController extends Controller {
 	public function store(NameRequest $request)
 	{
         PaymentType::create($request->all());
-        return redirect('types/payment')->with('success', 'Payment type added !');
+        return redirect('types/payments')->with('success', 'Payment type added !');
 	}
 
 	/**
@@ -63,7 +63,7 @@ class PaymentTypesController extends Controller {
 	public function update(PaymentType $type, NameRequest $request)
 	{
         $type->update($request->all());
-        return redirect('/types/payment')->with('success', 'Payment type updated');
+        return redirect('/types/payments')->with('success', 'Payment type updated');
 	}
 
 	/**
@@ -77,9 +77,9 @@ class PaymentTypesController extends Controller {
         try {
             $type->delete();
         } catch(QueryException $e) {
-            return redirect('/types/payment')->with('error', 'Payment type cant be deleted, because its been already been used !');
+            return redirect('/types/payments')->with('error', 'Payment type cant be deleted, because its been already been used !');
         }
-        return redirect('/types/payment');
+        return redirect('/types/payments');
 	}
 
 }

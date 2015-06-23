@@ -7,7 +7,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
                     <div class="panel-heading">Payment types
-                        <a href="{{ url('types/payment/create') }}" class="btn btn-primary btn-xs pull-right"> new type</a>
+                        <a href="{{ url('types/payments/create') }}" class="btn btn-primary btn-xs pull-right"> new type</a>
                     </div>
 
                     <div class="panel-body">
@@ -25,9 +25,9 @@
                                     <td>{{ $result->name }}</td>
                                     <td>{{ $result->info? 'Yes': 'No' }}</td>
                                     <td>
-                                        {!! Form::open(['url' => "types/payment/{$result->id}", 'method' => 'delete']) !!}
+                                        {!! Form::open(['url' => "types/payments/{$result->id}", 'method' => 'delete']) !!}
 
-                                        <a href="{{ url('types/payment/' . $result->id . '/edit')}}" class="btn btn-xs btn-success">edit</a>
+                                        <a href="{{ url('types/payments/' . $result->id . '/edit')}}" class="btn btn-xs btn-success">edit</a>
 
                                         {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
 

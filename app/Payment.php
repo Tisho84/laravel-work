@@ -6,7 +6,7 @@ class Payment extends Model {
 
     public static $rules = [
         'id' => [
-            'payment_type' => 'required|exists:payment_types,id'
+            'type_id' => 'required|exists:payment_types,id'
         ],
         'info' => [ //todo check if card is expired before final payment
             'brand' => 'required|max:255',

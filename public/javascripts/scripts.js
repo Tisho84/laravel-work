@@ -16,11 +16,11 @@ $(function(){
         });
     });
 
-    $('#payment_type').change(function(){
-        var id = $('#payment_type').val();
+    $('#type_id').change(function(){
+        var id = $('#type_id').val();
         $.ajax({
             type: 'get',
-            url: 'type/' + id
+            url: 'type/' + id //todo opravii 4e se 4upi na edita
         }).done(function(result){
             if(result == 1) {
                 $('.more-info').show();
