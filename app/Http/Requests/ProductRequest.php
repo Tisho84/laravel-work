@@ -28,6 +28,7 @@ class ProductRequest extends Request {
             'quantity' => 'required|digits_between:1,1000',
             'available' => 'boolean',
             'active' => 'boolean',
+            'price' => 'required|numeric|between:1,1000000000'
 		];
 	}
 

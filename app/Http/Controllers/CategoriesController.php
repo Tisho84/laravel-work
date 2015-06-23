@@ -1,14 +1,20 @@
 <?php namespace App\Http\Controllers;
 
 use App\Category;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use App\Http\Requests\NameRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriesController extends Controller {
 
+    /*
+     * middleware
+     */
+    public function __construct() 
+    {
+        $this->middleware('isAdmin', ['except' => 'show']);
+    }
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -56,8 +62,12 @@ class CategoriesController extends Controller {
 	{
 		$category->load('products');
         $products = $category->products()->get();
-
-        return view('categories.show', compact('category', 'products'));
+        $view = 'show';
+        if(!Auth::user()->is_admin) {
+            $view .= '_client';
+        }
+        
+        return view('categories.' . $view, compact('category', 'products'));
 	}
 
 	/**

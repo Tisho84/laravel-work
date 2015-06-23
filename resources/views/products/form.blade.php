@@ -6,6 +6,10 @@
     {!! Form::label('name', 'Name', ['class' => 'control-label']) !!}
     {!! Form::text('name', null, ['class' => 'form-control']) !!}
 </div>
+<div>
+    {!! Form::label('price', 'Price', ['class' => 'control-label']) !!}
+    {!! Form::text('price', null, ['class' => 'form-control']) !!}
+</div>
 <div class="form-group">
     {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
     {!! Form::text('quantity', null, ['class' => 'form-control']) !!}

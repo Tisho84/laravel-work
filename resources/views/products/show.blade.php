@@ -20,6 +20,10 @@
                             <div class="col-md-4">{{ $product->name }}</div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">Price:</div>
+                            <div class="col-md-4">{{ $product->price }}</div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">Description:</div>
                             <div class="col-md-4">{{ $product->description }}</div>
                         </div>

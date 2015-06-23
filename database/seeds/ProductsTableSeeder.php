@@ -19,7 +19,8 @@ class ProductsTableSeeder extends Seeder
                 'quantity' => $faker->numberBetween(0, 100),
                 'active' => $faker->boolean(85),
                 'category_id' => $faker->randomElement($categories),
-                'description' => $faker->sentence
+                'description' => $faker->sentence,
+                'price' => $faker->randomNumber(4)
             ]);
         }
     }
