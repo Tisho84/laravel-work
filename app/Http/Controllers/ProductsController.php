@@ -1,18 +1,24 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
-use App\Http\Requests\ProductRequest;
-use App\Order;
-use App\Product;
 use App\Category;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
+use App\Product;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller {
 
-	/**
+    /*
+     * middleware
+     */
+    public function __construct() 
+    {
+        $this->middleware('isAdmin', ['except' => 'index']);
+    }
+
+
+    /**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
@@ -20,7 +26,11 @@ class ProductsController extends Controller {
 	public function index()
 	{
         $products = Product::with('category')->get();
-		return view('products.index', compact('products'));
+        $view = 'index';
+        if(!Auth::user()->is_admin) { 
+            $view .= '_client';
+        }
+		return view('products.' . $view, compact('products'));
 	}
 
 	/**

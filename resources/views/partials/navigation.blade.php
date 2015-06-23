@@ -15,20 +15,21 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ url('/') }}">Home</a></li>
                 @if(Auth::user())
-                    <li><a href="{{ url('users') }}">Users</a></li>
-                    <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                            Nomenclatures <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
-                            <li>{!! Html::link( url('/types/address'), 'Address Type' ) !!}</li>
-                            <li>{!! Html::link( url('/types/payment'), 'Payment Type' ) !!}</li>
-                            <li>{!! Html::link( route('statuses.index'), 'Order Status' ) !!}</li>
-                        </ul>
-                    </li>
-
-                    <li>{!! Html::link( route('payments.index'), 'Payments') !!}</li>
+                    @if(Auth::user()->is_admin)
+                        <li><a href="{{ url('users') }}">Users</a></li>
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                Nomenclatures <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
+                                <li>{!! Html::link( url('/types/address'), 'Address Type' ) !!}</li>
+                                <li>{!! Html::link( url('/types/payment'), 'Payment Type' ) !!}</li>
+                                <li>{!! Html::link( route('statuses.index'), 'Order Status' ) !!}</li>
+                            </ul>
+                        </li>
+                    @endif
                     <li>{!! Html::link( route('products.index'), 'Products') !!}</li>
+                    <li>{!! Html::link( route('payments.index'), 'Payments') !!}</li>
                     <li><a href="{{ url('orders') }}">Orders</a></li>
                 @endif
             </ul>

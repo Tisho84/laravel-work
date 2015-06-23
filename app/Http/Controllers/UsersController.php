@@ -7,12 +7,11 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 
 class UsersController extends Controller
 {
-
+    
     /**
      * Display a listing of the resource.
      *

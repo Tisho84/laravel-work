@@ -9,7 +9,6 @@
                         Products
                         <a href="{{ route('products.create') }}" class="btn btn-primary btn-xs pull-right">new product</a>
                     </div>
-
                     <div class="panel-body">
                         <table class="table">
                             <thead>
@@ -17,6 +16,7 @@
                                 <th>Category</th>
                                 <th>Name</th>
                                 <th>Info</th>
+                                <th>Price per 1</th>
                                 <th>Quantity</th>
                                 <th>Available</th>
                                 <th>Active</th>
@@ -29,6 +29,7 @@
                                     <td>{{ $product->category->name }}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description }}</td>
+                                    <td>{{ $product->price }}</td>
                                     <td>{{ $product->quantity }}</td>
                                     <td>{{ $product->available? 'Yes' : 'No' }}</td>
                                     <td>{{ $product->active? 'Yes' : 'No' }}</td>
