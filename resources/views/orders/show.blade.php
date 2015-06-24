@@ -33,20 +33,20 @@
                             @else
                                 <table class="table">
                                     <thead>
-                                    <tr>
-                                        <th>Product Category</th>
-                                        <th>Product Name</th>
-                                        <th>Amount</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Product Category</th>
+                                            <th>Product Name</th>
+                                            <th>Amount</th>
+                                            <th>Price</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($order->products()->get() as $product)
                                         <tr>
-                                            <td>
-                                                {!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}
-                                            </td>
+                                            <td>{!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}</td>
                                             <td>{!! Html::link(route('products.show', [$product->id]), $product->name) !!}</td>
                                             <td>{{ $product->pivot->quantity }}</td>
+                                            <td>{{ $product->pivot->quantity * $product->price }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>

@@ -81,27 +81,44 @@ class OrderProductsController extends Controller {
 	 */
 	public function update(Order $order, Product $product, OrderRequest $request)
 	{
-        $product = Product::findOrFail(Input::get('product_id'));
-        if(!$product->available || !$product->active) {
+        $newProduct = Product::findOrFail(Input::get('product_id'));
+        $pivot = OrderProduct::findOrFail(Input::get('pivot_id'));
+        if(!$newProduct->available || !$newProduct->active) {
             return redirect()->back()->with('error', 'Product is not active or out of stock');
         }
-        DB::transaction(function() use ($order, $product, $request){
-            $pivot = OrderProduct::findOrFail(Input::get('pivot_id'));
-            $oldQuantity = $pivot->quantity;
-            $newQuantity = Input::get('quantity');
-            $newProductQuantity = $oldQuantity - $newQuantity;
-            dd($product->quantity);
-            if($product->quantity < $newProductQuantity) {
-                echo 'wtf';
-                return redirect()->back()->with('error', 'Reduce quantity - max:', $newProductQuantity);
+        if($newProduct->id == $product->id) {
+            $editProductQuantity = $newProduct->quantity + $pivot->quantity;
+            $quantity = Input::get('quantity');
+            if($editProductQuantity < $quantity) {
+                return redirect()->back()->with('error', 'Reduce quantity - max:' . $editProductQuantity);
             }
-            dd('ok');
-            $pivot->delete();
-            $order->products()->attach($product, ['quantity' => $newQuantity]);
-            //refresh quantity + old - new
-            $product->update(['quantity' => $newProductQuantity]);
-            $pivot->delete();
-        });
+            DB::transaction(function() use ($newProduct, $quantity,  $pivot, $editProductQuantity){
+                $newProduct->update(['quantity' => $editProductQuantity - $quantity]);
+                $pivot->update([
+                    'product_id' => $newProduct->id,
+                    'quantity' => $quantity,
+                ]);
+            });
+        }
+        else {
+            if($newProduct->quantity < Input::get('quantity')) {
+                return redirect()->back()->with('error', 'Reduce quantity - max:' . $newProduct->quantity);
+            }
+            DB::transaction(function() use ($pivot, $product, $newProduct){
+                $newQuantity = Input::get('quantity');
+                //update old product (increase quantity)
+                $oldQuantity = $pivot->quantity;
+                $product->update(['quantity' => $product->quantity + $oldQuantity]);
+                //update pivot table
+                $pivot->update([
+                    'product_id' => $newProduct->id,
+                    'quantity' => $newQuantity,
+                ]);    
+                //update new products(descrese quantity)
+                $newProduct->update(['quantity' => $newProduct->quantity - $newQuantity]);
+            });
+        }
+        return redirect(route('orders.edit', $order->id))->with('success', 'Ordered product edited.');
 	}
 
 	/**

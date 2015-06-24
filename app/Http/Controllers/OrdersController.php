@@ -118,6 +118,10 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
+//        foreach($order->products()->get() as $product) {
+//            //$product->total = $product->price * 
+//        }
+        //$order->load('products')->get();//, 'address', 'payment')->get();
         return view('orders.show', compact('order'));
     }
 
