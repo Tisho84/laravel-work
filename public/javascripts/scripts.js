@@ -3,16 +3,27 @@ $(function(){
         var id = $('#category').val();
         $.ajax({
             type: 'get',
-            url: 'categories/' + id
+            url: '/ajax/categories/' + id
         }).done(function(result){
             var ids = Object.keys(result);
             var product = $("#product");
             product.find('option').remove();
             var count = 0;
             $.each(result, function() {
-                product.append($("<option />").val(ids[count]).text(result[ids[count]]));
+                product.append($("<option />").val(ids[count]).text(result[ids[count]].name));
+                $('.product-price').text(result[ids[count]].price);
                 count++;
             });
+        });
+    });
+
+    $('#product').change(function(){
+       var id = $('#product').val();
+        $.ajax({
+            type: 'get',
+            url: '/ajax/products/' + id
+        }).done(function(result) {
+            $('.product-price').text(result);
         });
     });
 

@@ -20,6 +20,10 @@
                             {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
                             {!! Form::text('quantity', null, ['class' => 'form-control']) !!}
                         </div>
+                        <div class="form-group">
+                            {!! Form::label('price', 'Price per 1:', ['class' => 'control-label']) !!}
+                            <span class="product-price"></span>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <button type="button" onclick="addOrder()" class="btn">

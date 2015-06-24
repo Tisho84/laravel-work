@@ -8,6 +8,6 @@ class OrderProduct extends Model {
 
     public $timestamps = false;
 
-    protected $fillable = array('order_id', 'product_id', 'quantity');
+    protected $fillable = array('id', 'order_id', 'product_id', 'quantity');
 
 }

@@ -70,19 +70,7 @@ class AddressController extends Controller {
 	 */
 	public function update(Order $order, Address $address, AddressRequest $request)
 	{
-        //todo update
-		return 'here';
+        $address->update($request->all());
+        return redirect('orders')->with('success', 'Order address information changed.');
 	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
-
 }

@@ -14,7 +14,7 @@ class ProductsController extends Controller {
      */
     public function __construct() 
     {
-        $this->middleware('isAdmin', ['except' => 'index']);
+        $this->middleware('isAdmin', ['except' => ['index', 'show']]);
     }
 
 
@@ -109,5 +109,11 @@ class ProductsController extends Controller {
         return redirect('products');
 
 	}
+
+    public function getProductPrice($id)
+    {
+        $product = Product::findOrFail($id);
+        return $product->price;
+    }
 
 }

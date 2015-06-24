@@ -54,9 +54,10 @@ class OrderPaymentController extends Controller {
 	 */
 	public function edit(Order $order, Payment $payment)
     {
-        $types = PaymentType::lists('name', 'id');
-        $types = array_merge([' -- Select -- '], $types);
-        return view('payments.edit', compact('order', 'payment', 'types'));
+        if(!$payment->type->info) {
+            return redirect()->back()->with('error', 'Payment cant be changed.');
+        }
+        return view('payments.edit', compact('order', 'payment'));
 	}
 
 	/**
@@ -67,13 +68,11 @@ class OrderPaymentController extends Controller {
 	 */
 	public function update(Order $order, Payment $payment, Request $request)
     {
-        $this->validate($request, Payment::$rules['id']);
-        $input = $request->all();
-        $input['type_id'] = $input['payment_type'];
         if($payment->type->info) {
             $this->validate($request, Payment::$rules['info']);
+            $payment->update($request->all());
         }
-        return 'here';
+        return redirect('orders')->with('success', 'Order payment information changed.');
 	}
 
     /**

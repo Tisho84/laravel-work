@@ -8,7 +8,7 @@
                     <div class="panel-heading">Payment information</div>
                     <div class="panel-body">
                         {!! Form::open(['route' => ['orders.payment.store', $order->id], 'method' => 'post']) !!}
-                        @include('payments.form', ['button' => 'Save'])
+                        @include('payments.form', ['button' => 'Save', 'action' => 'store'])
                         {!! Html::link(route('orders.address.create', [$order->id]), 'set address', ['class' => 'btn btn-default']) !!}
                         {!! Form::close() !!}
                     </div>

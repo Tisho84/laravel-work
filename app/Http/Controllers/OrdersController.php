@@ -8,10 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use App\PaymentType;
 use App\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 
 class OrdersController extends Controller
@@ -26,6 +28,13 @@ class OrdersController extends Controller
     {
         //todo delete all address and payment = null, and orders() == 0
         $orders = Order::with('user', 'products', 'status')->get();
+        foreach($orders as $order) {
+            $amount = 0;
+            foreach($order->products as $product) {
+                $amount += $product->price * $product->pivot->quantity;
+            }
+            $order->amount = $amount;
+        }
         return view('orders.index', compact('orders'));
     }
 
@@ -42,13 +51,17 @@ class OrdersController extends Controller
         $products = array_merge($select, $products);
         $categories = array_merge($select, $categories);
 
-        $order = Order::create([
-            'user_id' => Auth::user()->id,
-            'address_id' => null,
-            'payment_id' => null,
-            'status_id' => 1,
-        ]);
-
+        //if id is set use already created order or create new
+        if(Input::get('id')) {
+            $order = Order::findOrFail(Input::get('id'));
+        } else {
+            $order = Order::create([
+                'user_id' => Auth::user()->id,
+                'address_id' => null,
+                'payment_id' => null,
+                'status_id' => 1,
+            ]);
+        }
         return view('orders.create', compact('products', 'categories', 'order'));
     }
 
@@ -70,8 +83,12 @@ class OrdersController extends Controller
             $message = 'Product added successfully to cart';
             if ($product) {
                 if ($product->quantity > $quantity) {
-                    $order = Order::find(Input::get('order'));
-                    $order->products()->attach($product, ['quantity' => $quantity]);
+                    //todo validaciika i tuka
+                    DB::transaction(function() use ($product, $quantity){
+                        $product->update(['quantity' => $product->quantity - $quantity]);
+                        $order = Order::find(Input::get('order'));
+                        $order->products()->attach($product, ['quantity' => $quantity]);
+                    });
                 } else {
                     $message = 'reduce quantity';
                     $code = 400;
@@ -85,6 +102,14 @@ class OrdersController extends Controller
         }
     }
 
+    /**
+     * edit Order $order
+     */
+    public function edit(Order $order)
+    {
+        $order->load('products', 'status')->get();
+        return view('orders.edit', compact('order'));
+    }
 
     /**
      * @param Order $order
@@ -93,22 +118,7 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-
-       // $order->load('user', 'products', 'address', 'payment')->get();
         return view('orders.show', compact('order'));
-    }
-
-    /**
-     * @param Order $order
-     * delete order
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Exception
-     */
-    public function destroy(Order $order)
-    {
-        $order->delete();
-
-        return redirect('orders');
     }
 
     /**
@@ -119,7 +129,12 @@ class OrdersController extends Controller
     public function getProductsByCategory($id)
     {
         $category = Category::findOrFail($id);
-        return $category->products()->lists('name', 'id');
+        $products = $category->products()->get();
+        $productsJSon = [];
+        foreach($products as $product) {
+            $productsJSon[$product->id] = ['name' => $product->name, 'price' => $product->price];
+        }
+        return $productsJSon;
     }
 
 }

@@ -1,7 +1,9 @@
-<div class="form-group">
-    {!! Form::label('type_id', 'Payment Type', ['class' => 'control-label']) !!}
-    {!! Form::select('type_id', $types, null , ['class' => 'form-control']) !!}
-</div>
+@if($action == 'store')
+    <div class="form-group">
+        {!! Form::label('type_id', 'Payment Type', ['class' => 'control-label']) !!}
+        {!! Form::select('type_id', $types, null , ['class' => 'form-control']) !!}
+    </div>
+@endif
 <div class="more-info">
     <div class="form-group">
         {!! Form::label('brand', 'Brand', ['class' => 'control-label']) !!}

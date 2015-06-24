@@ -28,7 +28,7 @@
                         <div class="row-md">
                             @if(!count($order->products()->get()))
                                 <div class="col-md">
-                                    {!! Html::link(route('orders.edit', [$order->id]), 'add products', ['class' => 'btn btn-small btn-warning']) !!}
+                                    {!! Html::link(route('orders.create', ['id' => $order->id]), 'add products', ['class' => 'btn btn-small btn-warning']) !!}
                                 </div>
                             @else
                                 <table class="table">
@@ -51,6 +51,9 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+                                <div class="col-md">
+                                    {!! Html::link(route('orders.edit', [$order->id]), 'edit products', ['class' => 'btn btn-default']) !!}
+                                </div>
                             @endif
                         </div>
                         <hr>
@@ -82,12 +85,12 @@
                                         <div class="col-md-6">Amount</div>
                                         <div class="col-md-6">{{ $order->payment->amount }}</div>
                                     </div>
-                                @endif
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        {!! Html::link(route('orders.payment.edit', [$order->id, $order->payment->id]), 'edit', ['class' => 'btn btn-default']) !!}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {!! Html::link(route('orders.payment.edit', [$order->id, $order->payment->id]), 'edit', ['class' => 'btn btn-default']) !!}
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @else
                                 <div class="row">
                                     <div class="col-md-6">

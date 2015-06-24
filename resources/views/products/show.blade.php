@@ -27,18 +27,20 @@
                             <div class="col-md-4">Description:</div>
                             <div class="col-md-4">{{ $product->description }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">Quantity:</div>
-                            <div class="col-md-4">{{ $product->quantity }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Available:</div>
-                            <div class="col-md-4">{{ $product->available? 'Yes' : 'No' }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Active:</div>
-                            <div class="col-md-4">{{ $product->active? 'Yes' : 'No' }}</div>
-                        </div>
+                        @if(Auth::user()->is_admin)
+                            <div class="row">
+                                <div class="col-md-4">Quantity:</div>
+                                <div class="col-md-4">{{ $product->quantity }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Available:</div>
+                                <div class="col-md-4">{{ $product->available? 'Yes' : 'No' }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Active:</div>
+                                <div class="col-md-4">{{ $product->active? 'Yes' : 'No' }}</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

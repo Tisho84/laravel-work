@@ -15,6 +15,7 @@
                             <tr>
                                 <th>Client</th>
                                 <th>Products</th>
+                                <th>Amount</th>
                                 <th>Status</th>
                                 <th>Ordered on</th>
                             </tr>
@@ -29,16 +30,11 @@
                                                 {{ $product->name . '(' . $product->pivot->quantity . ')' }},
                                             @endforeach
                                         </td>
+                                        <td>{{ $order->amount }}</td>
                                         <td>{{ $order->status->name }}</td>
                                         <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
-                                            {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
-
                                             <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
-
-                                            {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
-
-                                            {!! Form::close() !!}
                                         </td>
                                     </tr>
                                 @endforeach

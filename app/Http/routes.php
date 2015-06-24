@@ -45,13 +45,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('orders', 'OrdersController');
     Route::resource('orders.address', 'AddressController');
     Route::resource('orders.payment', 'OrderPaymentController');
+    Route::resource('orders.products', 'OrderProductsController');
 
     Route::group(['prefix' => 'types'], function () {
         Route::resource('addresses', 'AddressTypesController');
         Route::resource('payments', 'PaymentTypesController');
     });
 
-    Route::get('orders/categories/{id}', 'OrdersController@getProductsByCategory');
+    Route::get('ajax/categories/{id}', 'OrdersController@getProductsByCategory');
+    Route::get('ajax/products/{id}', 'ProductsController@getProductPrice');
     Route::get('orders/{order}/payment/type/{id}', 'OrderPaymentController@getPaymentType');
     
     Route::resource('products', 'ProductsController');
