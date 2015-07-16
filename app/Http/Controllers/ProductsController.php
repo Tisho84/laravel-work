@@ -17,7 +17,6 @@ class ProductsController extends Controller {
         $this->middleware('isAdmin', ['except' => ['index', 'show']]);
     }
 
-
     /**
 	 * Display a listing of the resource.
 	 *
@@ -25,7 +24,21 @@ class ProductsController extends Controller {
 	 */
 	public function index()
 	{
-        $products = Product::with('category')->get();
+        if(Auth::user()->is_admin) {
+            $products = Product::with('category')->get();
+        } else {
+            $productsAll = Product::with(['category' => function($query){
+                $query->active();
+            }])
+                ->sell()
+                ->get();
+            $products = [];
+            foreach($productsAll as $product) {
+                if($product->category !== null) {
+                    $products[] = $product;
+                }
+            }
+        }
         $view = 'index';
         if(!Auth::user()->is_admin) { 
             $view .= '_client';
@@ -112,7 +125,7 @@ class ProductsController extends Controller {
 
     public function getProductPrice($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::sell()->findOrFail($id);
         return $product->price;
     }
 

@@ -1,9 +1,9 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
-use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use App\Classes\Rules;
 
 class ProfileUpdateRequest extends Request
 {
@@ -25,6 +25,7 @@ class ProfileUpdateRequest extends Request
      */
     public function rules()
     {
+        $phone = Rules::getRule('phone');
         $id = Auth::user()->id;
         if(Request::get('id')) {
             $id = Request::get('id');
@@ -35,7 +36,7 @@ class ProfileUpdateRequest extends Request
             'last_name' => 'required|max:255',
             'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'max:255|regex:' . User::$rules['phone'],
+            'phone' => 'max:255|regex:' . $phone,
             'password' => 'confirmed'
         ];
     }

@@ -9,7 +9,6 @@
                     <div class="panel-body">
                         {!! Form::model($address, ['route' => ['orders.address.update', $order->id, $address->id], 'method' => 'put']) !!}
                         @include('address.form', [ 'button' => 'Edit'])
-                        {!! Html::link(route('orders.payment.create', [$order->id]), 'set payment', ['class' => 'btn btn-default']) !!}
                         {!! Form::close() !!}
                     </div>
                 </div>

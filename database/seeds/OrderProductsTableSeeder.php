@@ -15,8 +15,8 @@ class OrderProductsTableSeeder extends Seeder
         $orders = Order::lists('id');
         $products = Product::lists('id');
         foreach(range(1, 45) as $index) {
-            if($index > 25){
-                $index -= 25;
+            if($index > 29){
+                $index -= 29;
             }
             OrderProduct::create([
                 'order_id' => $orders[$index],

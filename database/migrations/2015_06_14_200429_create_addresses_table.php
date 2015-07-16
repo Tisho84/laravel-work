@@ -15,14 +15,12 @@ class CreateAddressesTable extends Migration {
 		Schema::create('addresses', function(Blueprint $table)
 		{
 			$table->increments('id');
-            $table->integer('type_id')->unsigned();
+            $table->tinyInteger('type');
             $table->string('street');
             $table->string('city');
             $table->string('zip');
             $table->string('country');
             $table->timestamps();
-            $table->foreign('type_id')
-                ->references('id')->on('address_types');
 		});
 	}
 

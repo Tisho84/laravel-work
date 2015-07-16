@@ -16,6 +16,7 @@ class ModifyProductsTable extends Migration {
         {
             $table->renameColumn('available_m25', 'available');
             $table->dropColumn('other_info');
+            $table->string('description');
             $table->integer('quantity');
             $table->boolean('active')->default(0);
         });
@@ -32,8 +33,7 @@ class ModifyProductsTable extends Migration {
         {
             $table->renameColumn('available', 'available_m25');
             $table->string('other_info');
-            $table->dropColumn('quantity');
-            $table->dropColumn('active');
+            $table->dropColumn(['quantity', 'active', 'description']);
         });
     }
 

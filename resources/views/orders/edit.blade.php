@@ -30,9 +30,7 @@
                                     <td>{{ $product->pivot->quantity * $product->price }}</td>
                                     <td>
                                         {!! Form::open(['route' => ['orders.products.destroy', $order->id, $product->id], 'method' => 'delete']) !!}
-
                                         <a href="{{ route('orders.products.edit', [$order->id, $product->id])}}" class="btn btn-xs btn-success">edit</a>
-
                                         {!! Form::submit('remove', ['class' => 'btn btn-danger btn-xs']) !!}
                                         {!! Form::close() !!}
                                     </td>

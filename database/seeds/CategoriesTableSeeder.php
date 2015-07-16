@@ -12,9 +12,9 @@ class CategoriesTableSeeder extends Seeder
 
         foreach (range(1, 10) as $index) {
             Category::create([
-                'name' => $faker->name,
+                'name' => $faker->firstName,
                 'description' => $faker->text(130),
-                'active' => $faker->boolean(30),
+                'active' => $faker->boolean(85),
             ]);
         }
     }

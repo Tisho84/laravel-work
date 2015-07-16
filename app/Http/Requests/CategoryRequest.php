@@ -2,7 +2,7 @@
 
 use App\Http\Requests\Request;
 
-class NameRequest extends Request {
+class CategoryRequest extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,6 +23,7 @@ class NameRequest extends Request {
 	{
 		return [
             'name' => 'required|max:255',
+            'description' => 'required|max:255'
 		];
 	}
 

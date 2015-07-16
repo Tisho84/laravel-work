@@ -9,7 +9,7 @@
 
                     <div class="panel-body">
                         {!! Form::open(['url' => 'categories', 'method' => 'post']) !!}
-                        @include('partials.simple_create', ['button' => 'Save', 'text' => 'Category', 'field' => 'name'])
+                        @include('categories.form', ['button' => 'Save'])
                         {!! Form::close() !!}
                     </div>
                 </div>

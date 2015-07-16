@@ -40,20 +40,30 @@ class AuthController extends Controller {
     public function postLogin(Request $request)
 	{
 		$this->validate($request, [
-			'username' => 'required', 'password' => 'required',
+			'username_email' => 'required', 'password' => 'required',
 		]);
 
-		$credentials = $request->only('username', 'password');
+		$credentials = $request->only('username_email', 'password');
+        $credentialsUsername = [
+            'username' => $credentials['username_email'],
+            'password' => $credentials['password']
+        ];
 
-		if ($this->auth->attempt($credentials, $request->has('remember')))
+        $credentialsEmail = [
+            'email' => $credentials['username_email'],
+            'password' => $credentials['password']
+        ];
+
+		if ($this->auth->attempt($credentialsUsername, $request->has('remember')) ||
+            $this->auth->attempt($credentialsEmail, $request->has('remember')))
 		{
 			return redirect()->intended($this->redirectPath());
 		}
 
 		return redirect($this->loginPath())
-            ->withInput($request->only('username', 'remember'))
+            ->withInput($request->only('username_email', 'remember'))
             ->withErrors([
-                'username' => $this->getFailedLoginMessage(),
+                'username_email' => $this->getFailedLoginMessage(),
             ]);
 	}
     

@@ -25,7 +25,6 @@
                             {!! Form::text('quantity', $pivot->quantity, ['class' => 'form-control']) !!}
                         </div>
                         {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
-                        {!! Form::hidden('pivot_id', $pivot->id)!!}
                         {!! Form::close() !!}
                     </div>
                 </div>

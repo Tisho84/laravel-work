@@ -14,26 +14,21 @@ class ModifyOrdersTable extends Migration {
 	{
         Schema::table('orders', function(Blueprint $table)
         {
-            $table->dropColumn('service_id');
             $table->dropColumn('user_id');
         });
 
 		Schema::table('orders', function(Blueprint $table)
-		{
-			$table->dropColumn('amount');
+        {
+			$table->dropColumn(['service_id', 'amount']);
             $table->dropTimestamps();
             $table->timestamp('processed_on');
             $table->timestamp('shipped_on');
             $table->timestamp('expected_delivery_on');
             $table->timestamp('delivered_on');
-            $table->string('status');
+            $table->tinyInteger('status');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')
                 ->references('id')->on('users')
-                ->onDelete('cascade');
-            $table->integer('product_id')->unsigned();
-            $table->foreign('product_id')
-                ->references('id')->on('products')
                 ->onDelete('cascade');
         });
 	}
@@ -54,15 +49,14 @@ class ModifyOrdersTable extends Migration {
             $table->dropForeign('orders_user_id_foreign');
             $table->dropColumn('user_id');
 
-            $table->dropForeign('orders_product_id_foreign');
-            $table->dropColumn('product_id');
+            $table->integer('service_id');
         });
 
         Schema::table('orders', function(Blueprint $table)
         {
             $table->integer('user_id');
-            $table->integer('service_id');
         });
+
 	}
 
 }

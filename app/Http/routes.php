@@ -10,10 +10,6 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/test', function(){
-    return Hash::make('123456');
-});
-
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
@@ -32,40 +28,19 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'updateProfile',
         'uses' => 'UsersController@updateProfile'
     ]);
-    
-    Route::get('payments', [
-        'as' => 'payments.index',
-        'uses' => 'PaymentsController@index']
-    );
-    Route::get('payments/{id}/show', [
-        'as' => 'payments.show',
-        'uses' => 'PaymentsController@show'
-    ]);
 
     Route::resource('orders', 'OrdersController');
     Route::resource('orders.address', 'AddressController');
-    Route::resource('orders.payment', 'OrderPaymentController');
+    //Route::resource('orders.payment', 'OrderPaymentController');
     Route::resource('orders.products', 'OrderProductsController');
-
-    Route::group(['prefix' => 'types'], function () {
-        Route::resource('addresses', 'AddressTypesController');
-        Route::resource('payments', 'PaymentTypesController');
-    });
 
     Route::get('ajax/categories/{id}', 'OrdersController@getProductsByCategory');
     Route::get('ajax/products/{id}', 'ProductsController@getProductPrice');
-    Route::get('orders/{order}/payment/type/{id}', 'OrderPaymentController@getPaymentType');
     
     Route::resource('products', 'ProductsController');
     Route::resource('categories', 'CategoriesController');
     
     Route::group(['middleware' => 'isAdmin'], function(){
         Route::resource('users', 'UsersController');
-        Route::resource('statuses', 'OrderStatusesController');
-        
-        Route::group(['prefix' => 'types'], function () {
-            Route::resource('address', 'AddressTypesController');
-            Route::resource('payment', 'PaymentTypesController');
-        });
     });
 });

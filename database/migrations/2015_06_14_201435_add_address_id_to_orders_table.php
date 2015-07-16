@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropProductIdInOrders extends Migration {
+class AddAddressIdToOrdersTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -14,8 +14,9 @@ class DropProductIdInOrders extends Migration {
 	{
 		Schema::table('orders', function(Blueprint $table)
 		{
-            $table->dropForeign('orders_product_id_foreign');
-            $table->dropColumn('product_id');
+            $table->integer('address_id')->unsigned()->nullable();
+            $table->foreign('address_id')
+                ->references('id')->on('addresses');
 		});
 	}
 
@@ -28,10 +29,8 @@ class DropProductIdInOrders extends Migration {
 	{
 		Schema::table('orders', function(Blueprint $table)
 		{
-            $table->integer('product_id')->unsigned();
-            $table->foreign('product_id')
-                ->references('id')->on('products')
-                ->onDelete('cascade');
+            $table->dropForeign('orders_address_id_foreign');
+            $table->dropColumn('address_id');
 		});
 	}
 

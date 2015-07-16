@@ -1,6 +1,6 @@
 <div class="form-group">
-    {!! Form::label('type_id', 'Address Type', ['class' => 'control-label']) !!}
-    {!! Form::select('type_id', $types, null , ['class' => 'form-control']) !!}
+    {!! Form::label('type', 'Address Type', ['class' => 'control-label']) !!}
+    {!! Form::select('type', $types, null , ['class' => 'form-control']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}

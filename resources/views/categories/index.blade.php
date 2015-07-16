@@ -16,6 +16,8 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Active</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -23,6 +25,8 @@
                             @foreach($categories as $category)
                                 <tr>
                                     <td>{{ $category->name }}</td>
+                                    <td>{{ $category->description }}</td>
+                                    <td>{{ $category->active ? 'yes' : 'no' }}</td>
                                     <td>
                                         {!! Form::open(['url' => "categories/{$category->id}", 'method' => 'delete']) !!}
 

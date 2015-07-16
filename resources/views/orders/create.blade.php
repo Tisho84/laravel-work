@@ -33,9 +33,6 @@
                             <div class="col-md-4">
                                 {!! Html::link(route('orders.address.create', [$order->id]), 'set address', ['class' => 'btn btn-default']) !!}
                             </div>
-                            <div class="col-md-4">
-                                {!! Html::link(route('orders.payment.create', [$order->id]), 'set payment', ['class' => 'btn btn-default']) !!}
-                            </div>
                         </div>
 
                         {!! Form::hidden('order_id', $order->id, ['class' => 'order_id']) !!}

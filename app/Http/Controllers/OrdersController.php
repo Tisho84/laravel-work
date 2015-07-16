@@ -1,12 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\AddressType;
 use App\Category;
+use App\Classes\AddressType;
+use App\Classes\OrderStatus;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Order;
-use App\PaymentType;
 use App\Product;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,14 +26,25 @@ class OrdersController extends Controller
      */
     public function index()
     {
+//        Order::with(['products' => function($query){
+//            $query->where('')
+//        }]);
         //todo delete all address and payment = null, and orders() == 0
-        $orders = Order::with('user', 'products', 'status')->get();
+        $user = Auth::user();
+        if($user->is_admin) {
+            $orders = Order::with('user', 'products')->get();
+        } else {
+            $orders = $user->orders()->with('products')->get();
+        }
         foreach($orders as $order) {
+            $order->status = OrderStatus::getStatus($order->status);
             $amount = 0;
-            foreach($order->products as $product) {
-                $amount += $product->price * $product->pivot->quantity;
+            if($order->products) {
+                foreach($order->products as $product) {
+                    $amount += $product->price * $product->pivot->quantity;
+                }
+                $order->amount = $amount;
             }
-            $order->amount = $amount;
         }
         return view('orders.index', compact('orders'));
     }
@@ -46,11 +57,14 @@ class OrdersController extends Controller
     public function create()
     {
         $select = ['-- Select --'];
-        $categories = Category::lists('name', 'id');
-        $products = Product::lists('name', 'id');
+        $categories = Category::where('active', 1)->lists('name', 'id');
+        $products = Product::sell()
+            ->lists('name', 'id');
         $products = array_merge($select, $products);
         $categories = array_merge($select, $categories);
-
+        if(!Auth::user()->active) {
+            return redirect()->back()->with('error', 'You cant shop from our store');
+        }
         //if id is set use already created order or create new
         if(Input::get('id')) {
             $order = Order::findOrFail(Input::get('id'));
@@ -58,8 +72,7 @@ class OrdersController extends Controller
             $order = Order::create([
                 'user_id' => Auth::user()->id,
                 'address_id' => null,
-                'payment_id' => null,
-                'status_id' => 1,
+                'status' => 1,
             ]);
         }
         return view('orders.create', compact('products', 'categories', 'order'));
@@ -83,7 +96,6 @@ class OrdersController extends Controller
             $message = 'Product added successfully to cart';
             if ($product) {
                 if ($product->quantity > $quantity) {
-                    //todo validaciika i tuka
                     DB::transaction(function() use ($product, $quantity){
                         $product->update(['quantity' => $product->quantity - $quantity]);
                         $order = Order::find(Input::get('order'));
@@ -107,7 +119,7 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        $order->load('products', 'status')->get();
+        $order->load('products')->get();
         return view('orders.edit', compact('order'));
     }
 
@@ -118,10 +130,8 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-//        foreach($order->products()->get() as $product) {
-//            //$product->total = $product->price * 
-//        }
-        //$order->load('products')->get();//, 'address', 'payment')->get();
+        $order->status = OrderStatus::getStatus($order->status);
+        $order->address->type = AddressType::getType($order->address->type);
         return view('orders.show', compact('order'));
     }
 
@@ -133,7 +143,9 @@ class OrdersController extends Controller
     public function getProductsByCategory($id)
     {
         $category = Category::findOrFail($id);
-        $products = $category->products()->get();
+        $products = $category->products()
+            ->sell()
+            ->get();
         $productsJSon = [];
         foreach($products as $product) {
             $productsJSon[$product->id] = ['name' => $product->name, 'price' => $product->price];

@@ -31,7 +31,7 @@
                                             @endforeach
                                         </td>
                                         <td>{{ $order->amount }}</td>
-                                        <td>{{ $order->status->name }}</td>
+                                        <td>{{ $order->status }}</td>
                                         <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
                                             <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>

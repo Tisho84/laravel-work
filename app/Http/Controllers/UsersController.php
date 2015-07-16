@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
 class UsersController extends Controller
 {
-    
     /**
      * Display a listing of the resource.
      *
@@ -83,9 +83,7 @@ class UsersController extends Controller
      */
     public function update(User $user, ProfileUpdateRequest $request)
     {
-        $input = Input::all();
-        $input['active'] = $input['active'] == 'on' ? 1: 0;
-        $user->update($input);
+        $user->update($request->all());
 
         return redirect('users');
     }
@@ -101,7 +99,11 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
+        try {
+            $user->delete();
+        } catch(QueryException $e) {
+            return redirect('users')->with('error', 'Cant delete this user has orders');
+        }
 
         return redirect('users');
     }

@@ -2,9 +2,12 @@
 
 use App\Category;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\NameRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 
 class CategoriesController extends Controller {
 
@@ -22,7 +25,11 @@ class CategoriesController extends Controller {
 	 */
 	public function index()
 	{
-		$categories = Category::all();
+        if(!Auth::user()->is_admin) {
+            $categories = Category::active()->get();
+        } else {
+            $categories = Category::all();
+        }
 
         return view('categories.index', compact('categories'));
 	}
@@ -44,9 +51,8 @@ class CategoriesController extends Controller {
      * @param Category $category
      * @return Response
      */
-	public function store(NameRequest $request)
+	public function store(CategoryRequest $request)
 	{
-        //$this->validate($request, Category::$rules);
         Category::create($request->all());
 
         return redirect('categories')->with('success', 'Category added !');
@@ -87,9 +93,9 @@ class CategoriesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update(Category $category, NameRequest $request)
+	public function update(Category $category, CategoryRequest $request)
 	{
-		$category->update($request->all());
+        $category->update($request->all());
 
         return redirect('categories')->with('success', 'Category updated!');
 	}
@@ -102,7 +108,11 @@ class CategoriesController extends Controller {
 	 */
 	public function destroy(Category $category)
 	{
-        $category->delete();
+        try {
+            $category->delete();
+        } catch(QueryException $e) {
+            return redirect('categories')->with('error', 'You cant delete that category its been used.');
+        }
 
         return redirect('categories');
 	}

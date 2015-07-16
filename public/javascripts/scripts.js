@@ -5,13 +5,18 @@ $(function(){
             type: 'get',
             url: '/ajax/categories/' + id
         }).done(function(result){
-            var ids = Object.keys(result);
             var product = $("#product");
             product.find('option').remove();
             var count = 0;
+            //product.append($('<option />')).val(0).text('-- Select --');
+            var obj = {};
+            obj.name = '-- Select --';
+            obj.price = '';
+            result[0] = obj;
+            var ids = Object.keys(result);
             $.each(result, function() {
                 product.append($("<option />").val(ids[count]).text(result[ids[count]].name));
-                $('.product-price').text(result[ids[count]].price);
+                //$('.product-price').text(result[ids[count]].price);
                 count++;
             });
         });
@@ -23,21 +28,8 @@ $(function(){
             type: 'get',
             url: '/ajax/products/' + id
         }).done(function(result) {
+            console.log(result);
             $('.product-price').text(result);
-        });
-    });
-
-    $('#type_id').change(function(){
-        var id = $('#type_id').val();
-        $.ajax({
-            type: 'get',
-            url: 'type/' + id //todo opravii 4e se 4upi na edita
-        }).done(function(result){
-            if(result == 1) {
-                $('.more-info').show();
-            } else {
-                $('.more-info').hide();
-            }
         });
     });
 });

@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Address;
-use App\AddressType;
+use App\Classes\AddressType;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -57,7 +57,7 @@ class AddressController extends Controller {
 	public function edit(Order $order, Address $address)
 	{
 
-        $types = AddressType::lists('name', 'id');
+        $types = AddressType::$types;
         $types = array_merge([' -- Select -- '], $types);
 		return view('address.edit', compact('order', 'address', 'types'));
 	}

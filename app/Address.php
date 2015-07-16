@@ -7,17 +7,11 @@ class Address extends Model
 
     protected $table = 'addresses';
 
-    protected $fillable = array('street', 'city', 'zip', 'country', 'type_id');
-
-    public function type()
-    {
-        return $this->belongsTo('App\AddressType');
-    }
+    protected $fillable = array('street', 'city', 'zip', 'country', 'type');
 
     public function order()
     {
         return $this->hasOne('App\Order');
-        //return $this->belongsTo('App\Order');
     }
 
 }

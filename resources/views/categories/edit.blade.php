@@ -9,7 +9,7 @@
 
                     <div class="panel-body">
                         {!! Form::model($category, ['route' => ['categories.update', $category->id], 'method' => 'put']) !!}
-                        @include('partials.simple_create', ['button' => 'Update', 'text' => 'Category', 'field' => 'name'])
+                        @include('categories.form', ['button' => 'Update'])
                         {!! Form::close() !!}
                     </div>
                 </div>

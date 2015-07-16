@@ -17,19 +17,21 @@
                 @if(Auth::user())
                     @if(Auth::user()->is_admin)
                         <li><a href="{{ url('users') }}">Users</a></li>
-                        <li class="dropdown">
+                        <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
+                    @else
+                        <li>
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                                Nomenclatures <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li>{!! Html::link( route('categories.index'), 'Categories' ) !!}</li>
-                                <li>{!! Html::link( url('/types/addresses'), 'Address Type' ) !!}</li>
-                                <li>{!! Html::link( url('/types/payments'), 'Payment Type' ) !!}</li>
-                                <li>{!! Html::link( route('statuses.index'), 'Order Status' ) !!}</li>
-                            </ul>
+                                Categories<span class="caret"></span></a>
+                            @if(count($nav_categories) > 0)
+                                <ul class="dropdown-menu">
+                                    @foreach($nav_categories as $category)
+                                        <li>{!! Html::link( route('categories.show', [$category->id]), $category->name ) !!}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </li>
                     @endif
                     <li>{!! Html::link( route('products.index'), 'Products') !!}</li>
-                    <li>{!! Html::link( route('payments.index'), 'Payments') !!}</li>
                     <li>{!! Html::link( route('orders.index'), 'Orders') !!}</li>
                 @endif
             </ul>

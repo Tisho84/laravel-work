@@ -15,47 +15,6 @@ use Illuminate\Support\Facades\Input;
 class OrderProductsController extends Controller {
 
 	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
 	 * Show the form for editing the specified resource.
 	 *
 	 * @param  int  $id
@@ -64,8 +23,8 @@ class OrderProductsController extends Controller {
 	public function edit(Order $order, Product $product)
 	{
         $select = ['-- Select --'];
-        $categories = Category::lists('name', 'id');
-        $products = Product::lists('name', 'id');
+        $categories = Category::active()->lists('name', 'id');
+        $products = Product::sell()->lists('name', 'id');
         $products = array_merge($select, $products);
         $categories = array_merge($select, $categories);
         $pivot = $order->products()->find($product->id)->pivot;
@@ -81,44 +40,21 @@ class OrderProductsController extends Controller {
 	 */
 	public function update(Order $order, Product $product, OrderRequest $request)
 	{
-        $newProduct = Product::findOrFail(Input::get('product_id'));
-        $pivot = OrderProduct::findOrFail(Input::get('pivot_id'));
-        if(!$newProduct->available || !$newProduct->active) {
-            return redirect()->back()->with('error', 'Product is not active or out of stock');
-        }
-        if($newProduct->id == $product->id) {
-            $editProductQuantity = $newProduct->quantity + $pivot->quantity;
-            $quantity = Input::get('quantity');
-            if($editProductQuantity < $quantity) {
-                return redirect()->back()->with('error', 'Reduce quantity - max:' . $editProductQuantity);
-            }
-            DB::transaction(function() use ($newProduct, $quantity,  $pivot, $editProductQuantity){
-                $newProduct->update(['quantity' => $editProductQuantity - $quantity]);
-                $pivot->update([
-                    'product_id' => $newProduct->id,
-                    'quantity' => $quantity,
-                ]);
-            });
-        }
-        else {
-            if($newProduct->quantity < Input::get('quantity')) {
-                return redirect()->back()->with('error', 'Reduce quantity - max:' . $newProduct->quantity);
-            }
-            DB::transaction(function() use ($pivot, $product, $newProduct){
-                $newQuantity = Input::get('quantity');
-                //update old product (increase quantity)
-                $oldQuantity = $pivot->quantity;
-                $product->update(['quantity' => $product->quantity + $oldQuantity]);
-                //update pivot table
-                $pivot->update([
-                    'product_id' => $newProduct->id,
-                    'quantity' => $newQuantity,
-                ]);    
-                //update new products(descrese quantity)
-                $newProduct->update(['quantity' => $newProduct->quantity - $newQuantity]);
-            });
-        }
-        return redirect(route('orders.edit', $order->id))->with('success', 'Ordered product edited.');
+        DB::transaction(function() use ($order, $product) {
+            $oldQuantity = $order->products()->find($product->id)->pivot->quantity;
+            $product->update(['quantity' => $product->quantity + $oldQuantity]);
+            $order->products()->updateExistingPivot(
+                $product->id, [
+                    'product_id' => Input::get('product_id'),
+                    'quantity' => Input::get('quantity')
+                ]
+            );
+            $product = $order->products()->find(Input::get('product_id'));
+            $newQuantity = $product->pivot->quantity;
+            $order->products()->find(Input::get('product_id'))
+                ->update(['quantity' => $product->quantity - $newQuantity]);
+
+        });
 	}
 
 	/**

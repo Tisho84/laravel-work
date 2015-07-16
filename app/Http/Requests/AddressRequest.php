@@ -22,7 +22,7 @@ class AddressRequest extends Request {
 	public function rules()
 	{
 		return [
-            'type_id' => 'required|exists:address_types,id',
+            'type' => 'required',
             'country' => 'required|max:255',
             'city' => 'required|max:255',
             'street' => 'required|max:255',
