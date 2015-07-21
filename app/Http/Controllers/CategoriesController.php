@@ -67,7 +67,7 @@ class CategoriesController extends Controller {
 	public function show(Category $category)
 	{
 		$category->load('products');
-        $products = $category->products()->get();
+        $products = $category->products()->sell()->get();
         $view = 'show';
         if(!Auth::user()->is_admin) {
             $view .= '_client';

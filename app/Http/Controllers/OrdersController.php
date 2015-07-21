@@ -26,27 +26,16 @@ class OrdersController extends Controller
      */
     public function index()
     {
-//        Order::with(['products' => function($query){
-//            $query->where('')
-//        }]);
-        //todo delete all address and payment = null, and orders() == 0
+        $view = 'orders.index';
         $user = Auth::user();
-        if($user->is_admin) {
+        if ($user->is_admin) {
             $orders = Order::with('user', 'products')->get();
         } else {
+            $view .= '_client';
             $orders = $user->orders()->with('products')->get();
         }
-        foreach($orders as $order) {
-            $order->status = OrderStatus::getStatus($order->status);
-            $amount = 0;
-            if($order->products) {
-                foreach($order->products as $product) {
-                    $amount += $product->price * $product->pivot->quantity;
-                }
-                $order->amount = $amount;
-            }
-        }
-        return view('orders.index', compact('orders'));
+
+        return view($view, compact('orders'));
     }
 
     /**
@@ -56,26 +45,26 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        $select = ['-- Select --'];
-        $categories = Category::where('active', 1)->lists('name', 'id');
-        $products = Product::sell()
-            ->lists('name', 'id');
-        $products = array_merge($select, $products);
-        $categories = array_merge($select, $categories);
         if(!Auth::user()->active) {
-            return redirect()->back()->with('error', 'You cant shop from our store');
+            return redirect()->back()->with('error', 'You cant shop from our store(not active)');
         }
-        //if id is set use already created order or create new
-        if(Input::get('id')) {
-            $order = Order::findOrFail(Input::get('id'));
-        } else {
-            $order = Order::create([
-                'user_id' => Auth::user()->id,
-                'address_id' => null,
-                'status' => 1,
-            ]);
+
+        $selectedProducts = [];
+        if (session()->has('products')) {
+            $selectedProducts = session()->pull('products');;
         }
-        return view('orders.create', compact('products', 'categories', 'order'));
+
+        $select = [ 0 => '-- Select --' ];
+        $productsModel = Product::sell()->get();
+        $products = [];
+        foreach ($productsModel as $product) {
+            $products[$product->id] = $product->name . ' - price ' . $product->price;
+        }
+        if (Input::get('product') && empty($selectedProducts)) {
+            $selectedProducts[] = [ 'product_id' => Input::get('product'), 'quantity' => 1 ];
+        }
+        $products = $select + $products;
+        return view('orders.create', compact('products', 'order', 'selectedProducts'));
     }
 
     /**
@@ -85,33 +74,50 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->ajax()) {
-            $product = Input::get('product');
-            $quantity = Input::get('quantity');
-            $product = Product::where('id', $product)
-                ->where('available', '=', 1)
-                ->where('active', '=', 1)
-                ->first();
-            $code = 200;
-            $message = 'Product added successfully to cart';
-            if ($product) {
-                if ($product->quantity > $quantity) {
-                    DB::transaction(function() use ($product, $quantity){
-                        $product->update(['quantity' => $product->quantity - $quantity]);
-                        $order = Order::find(Input::get('order'));
-                        $order->products()->attach($product, ['quantity' => $quantity]);
-                    });
-                } else {
-                    $message = 'reduce quantity';
-                    $code = 400;
-                }
-            } else {
-                $message = 'product is not available or active';
-                $code = 400;
+        $product = $request->get('product');
+        $quantity = $request->get('quantity');
+        $data = [];
+        for ($i = 0; $i < count($product); $i++) {
+            if (!$product[$i] || !$quantity[$i] || $quantity[$i] <= 0) {
+                $errors[] = 'product and quantity is required and > 0';
             }
-
-            return response()->json(['message' => $message], $code);
+            $data[] = [
+                'product_id' => $product[$i],
+                'quantity' => $quantity[$i]
+            ];
         }
+
+        if (isset($errors) && count($errors) > 0) {
+            return redirect()->back()->withErrors($errors)->with('products', $data);
+        }
+
+        $ids = implode(',', $product);
+        $products = Product::whereRaw("id IN ({$ids})")->get();
+        $counter = 0;
+        foreach ($products as $product) {
+            if ($product->quantity < $data[$counter]['quantity']) {
+                $errors[] = $product->name . 'quantity must be reduced' . ' max(' . $product->quantity . ')';
+            }
+            $counter++;
+        }
+
+        if (isset($errors) && count($errors) > 0) {
+            return redirect()->back()->withErrors($errors)->with('products', $data);
+        }
+
+        DB::transaction(function() use ($data){ #todo quantity --
+            $newData = [];
+            foreach ($data as $value) {
+                $newData[$value['product_id']] = ['quantity' => $value['quantity']];
+            }
+            $order = Order::create([
+                'status' => 1,
+                'user_id' => Auth::user()->id,
+                'address_id' => null,
+            ]);
+            $order->products()->attach($newData);
+        });
+        return redirect(route('orders.index'))->with('success', 'Order successful');
     }
 
     /**
@@ -131,7 +137,7 @@ class OrdersController extends Controller
     public function show(Order $order)
     {
         $order->status = OrderStatus::getStatus($order->status);
-        $order->address->type = AddressType::getType($order->address->type);
+//        $order->address- = AddressType::getType($order->address->type);
         return view('orders.show', compact('order'));
     }
 
@@ -140,6 +146,11 @@ class OrdersController extends Controller
      * @param $id
      * @return mixed
      */
+    public function destroy()
+    {
+
+    }
+
     public function getProductsByCategory($id)
     {
         $category = Category::findOrFail($id);

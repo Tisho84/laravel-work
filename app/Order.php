@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Classes\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model {
@@ -22,6 +23,23 @@ class Order extends Model {
     {
         //only order_id and product_id listed at attributes when using pivot
         return $this->belongsToMany('App\Product', 'order_products')->withPivot(['quantity', 'id']);
+    }
+
+    public function getStatus()
+    {
+        return OrderStatus::getStatus($this->status);
+    }
+
+    public function getAmount()
+    {
+        $amount = 0;
+        if($this->products) {
+            foreach($this->products as $product) {
+                $amount += $product->price * $product->pivot->quantity;
+            }
+            $this->amount = $amount;
+        }
+        return $this->amount;
     }
 
 }

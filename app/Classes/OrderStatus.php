@@ -13,7 +13,7 @@ class OrderStatus
         3 => 'Preparing',
         4 => 'Paid',
         5 => 'Delivered',
-        6 => 'Cancelled'
+        100 => 'Cancelled'
     ];
 
     public static function getStatus($key)

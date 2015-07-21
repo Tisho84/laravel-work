@@ -27,7 +27,7 @@ class Product extends Model {
     {
         return $query->where('active', 1)
             ->where('available', 1)
-            ->where('quantity', '>', 1);
+            ->where('quantity', '>', 0);
     }
 
     public function category()

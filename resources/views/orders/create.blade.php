@@ -8,21 +8,66 @@
                     <div class="panel-heading">Order something</div>
                     <div class="panel-body">
                         {!! Form::open(['url' => 'orders', 'method' => 'post']) !!}
-                        <div class="form-group">
-                            {!! Form::label('category', 'Category', ['class' => 'control-label']) !!}
-                            {!! Form::select('category', $categories, null , ['class' => 'form-control']) !!}
-                        </div>
-                        <div class="form-group">
-                            {!! Form::label('product', 'Product', ['class' => 'control-label']) !!}
-                            {!! Form::select('product', $products, null , ['class' => 'form-control']) !!}
-                        </div>
-                        <div class="form-group">
-                            {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
-                            {!! Form::text('quantity', null, ['class' => 'form-control']) !!}
-                        </div>
-                        <div class="form-group">
-                            {!! Form::label('price', 'Price per 1:', ['class' => 'control-label']) !!}
-                            <span class="product-price"></span>
+                        <div class="repeat">
+                            <?php $counter = 0; ?>
+                            @if(count($selectedProducts) > 0)
+                                @foreach($selectedProducts as $value)
+                                    <div class="single-repeat">
+                                        <div class="row">
+                                            <div class="col-sm-9">
+                                                <div class="form-group">
+                                                    {!! Form::label('product', 'Product', ['class' => 'control-label']) !!}
+                                                    {!! Form::select('product[]', $products, $value['product_id'] , ['class' => 'form-control']) !!}
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
+                                                    {!! Form::text('quantity[]', $value['quantity'], ['class' => 'form-control']) !!}
+                                                </div>
+                                            </div>
+                                            @if($counter == 0)
+                                                <div class="coll-sm-1 remove-button hidden" >
+                                            @else
+                                                <div class="coll-sm-1">
+                                            @endif
+                                                <div class="form-group">
+                                                    {!! Form::label('quantity', 'Remove', ['class' => 'control-label']) !!}
+                                                    <button type="button" onclick="removeOrder(this)" class="btn">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php $counter++; ?>
+                                @endforeach
+                            @else
+                                <div class="single-repeat">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <div class="form-group ">
+                                                {!! Form::label('product', 'Product', ['class' => 'control-label']) !!}
+                                                {!! Form::select('product[]', $products, 0 , ['class' => 'form-control']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
+                                                {!! Form::text('quantity[]', '', ['class' => 'form-control']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="coll-sm-1 remove-button hidden">
+                                            <div class="form-group">
+                                                {!! Form::label('quantity', 'Remove', ['class' => 'control-label']) !!}
+                                                <button type="button" onclick="removeOrder(this)" class="btn">
+                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                         <div class="row">
                             <div class="col-md-4">
@@ -31,11 +76,10 @@
                                 </button>
                             </div>
                             <div class="col-md-4">
-                                {!! Html::link(route('orders.address.create', [$order->id]), 'set address', ['class' => 'btn btn-default']) !!}
+                            {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
                             </div>
                         </div>
 
-                        {!! Form::hidden('order_id', $order->id, ['class' => 'order_id']) !!}
                         {!! Form::close() !!}
                     </div>
                 </div>

@@ -23,7 +23,7 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description }}</td>
                                     <td>{{ $product->price }}</td>
-                                    <td>{!! Html::link('#', 'order now') !!}</td>
+                                    <td>{!! Html::link(route('orders.create', ['product' => $product->id]), 'order now') !!}</td>
                                 </tr>
                             @endforeach
                             </tbody>

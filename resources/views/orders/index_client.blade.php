@@ -13,7 +13,6 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Client</th>
                                     <th>Products</th>
                                     <th>Amount</th>
                                     <th>Status</th>
@@ -24,7 +23,6 @@
                             @if(count($orders) > 0)
                                 @foreach($orders as $order)
                                     <tr>
-                                        <td>{{ $order->user->first_name . ' ' . $order->user->last_name }}</td>
                                         <td>
                                             @foreach($order->products as $product)
                                                 {{ $product->name . '(' . $product->pivot->quantity . ')' }},
@@ -35,11 +33,10 @@
                                         <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
                                             {!! Form::open([route('orders.destroy', [$order->id]), 'method' => 'delete']) !!}
-
-                                            <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
-
-                                            {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
-
+                                                <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
+                                            @if($order->status == 1)
+                                                {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                                            @endif
                                             {!! Form::close() !!}
                                         </td>
                                     </tr>
