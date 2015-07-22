@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model {
 
-    protected $fillable = ['user_id', 'processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status'];
+    protected $fillable = ['user_id', 'processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status', 'address_id'];
 
     protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'created_at', 'updated_at'];
 

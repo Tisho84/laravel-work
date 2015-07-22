@@ -26,7 +26,7 @@
                             <tbody>
                             @foreach($products as $product)
                                 <tr>
-                                    <td>{{ $product->category->name }}</td>
+                                    <td>{!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description }}</td>
                                     <td>{{ $product->price }}</td>

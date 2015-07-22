@@ -34,7 +34,7 @@ class UsersTableSeeder extends Seeder
                 'email' => $faker->email,
                 'phone' => $faker->phoneNumber,
                 'username' => $faker->userName,
-                'active' => $faker->boolean(30),
+                'active' => $faker->boolean(80),
                 'password' => '123456',
             ]);
         }

@@ -31,7 +31,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('orders', 'OrdersController');
     Route::resource('orders.address', 'AddressController');
-    //Route::resource('orders.payment', 'OrderPaymentController');
     Route::resource('orders.products', 'OrderProductsController');
 
     Route::get('ajax/categories/{id}', 'OrdersController@getProductsByCategory');

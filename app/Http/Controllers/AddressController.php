@@ -31,8 +31,8 @@ class AddressController extends Controller {
         if($order->address !== null) {
             return redirect(route('orders.address.edit', [$order, $order->address_id]));
         }
-        $types = AddressType::lists('name', 'id');
-        $types = array_merge([' -- Select -- '], $types);
+        $types = AddressType::$types;
+        $types = array_merge([0 => ' -- Select -- '], $types);
         return view('address.create', compact('order', 'types'));
 	}
 
@@ -45,7 +45,7 @@ class AddressController extends Controller {
 	{
         $order->address()->associate(Address::create($request->all()))->save();
 
-        return redirect(route('orders.payment.create', [$order->id]))->with('success', 'Address added');
+        return redirect(route('orders.show', [$order->id]))->with('success', 'Address added');
 	}
 
 	/**
@@ -56,9 +56,8 @@ class AddressController extends Controller {
 	 */
 	public function edit(Order $order, Address $address)
 	{
-
         $types = AddressType::$types;
-        $types = array_merge([' -- Select -- '], $types);
+        $types = array_merge([0 => ' -- Select -- '], $types);
 		return view('address.edit', compact('order', 'address', 'types'));
 	}
 

@@ -136,7 +136,8 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-        $order->status = OrderStatus::getStatus($order->status);
+        $order->load('products', 'address', 'products.category');
+
 //        $order->address- = AddressType::getType($order->address->type);
         return view('orders.show', compact('order'));
     }
@@ -146,9 +147,25 @@ class OrdersController extends Controller
      * @param $id
      * @return mixed
      */
-    public function destroy()
+    public function destroy($order)
     {
-
+        $user = Auth::user();
+        if (!$user->is_admin) { #check if user has that order
+            $order = $user->orders()->where('id', '=', $order->id)->first();
+        }
+        if ($order->status == 1) {
+            $order->delete();
+        }
+        if ($user->is_admin && $order->status != 1) {
+            $products = $order->products()->get();
+            DB::transaction(function() use ($products, $order) {
+                foreach ($products as $product) { #increase quantity if status != 1
+                    $product->update(['quantity' => $product->quantity + $product->pivot->quantity]);
+                }
+                $order->delete();
+            });
+        }
+        return redirect()->back()->with('success', 'Order deleted.');
     }
 
     public function getProductsByCategory($id)

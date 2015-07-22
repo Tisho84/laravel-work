@@ -9,8 +9,8 @@ class OrderStatus
 {
     public static $statuses = [
         1 => 'Pending',
-        2 => 'Processing',
-        3 => 'Preparing',
+        2 => 'Processed',
+        3 => 'Prepared',
         4 => 'Paid',
         5 => 'Delivered',
         100 => 'Cancelled'
@@ -18,6 +18,6 @@ class OrderStatus
 
     public static function getStatus($key)
     {
-        return isset(self::$statuses[$key]) ? self::$statuses[$key] : 'not found';
+        return isset(self::$statuses[$key]) ? self::$statuses[$key] : 'status not found';
     }
 }

@@ -45,7 +45,16 @@
                                 <div class="col-md-4">
                                     <ul>
                                         @foreach($orders as $k => $order)
-                                            <li>{!! Html::link(route('orders.show', [$order->id]), 'Order N ' . $k) !!}</li>
+                                            <?php $k++; ?>
+                                            <li>
+                                                {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
+
+                                                {!! Html::link(route('orders.show', [$order->id]), 'Order No.' . $k) !!}
+
+                                                {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+
+                                                {!! Form::close() !!}
+                                            </li>
                                         @endforeach
                                     </ul>
                                 </div>

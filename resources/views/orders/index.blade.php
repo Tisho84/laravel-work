@@ -24,7 +24,7 @@
                             @if(count($orders) > 0)
                                 @foreach($orders as $order)
                                     <tr>
-                                        <td>{{ $order->user->first_name . ' ' . $order->user->last_name }}</td>
+                                        <td>{!! Html::link(route('users.show', [$order->user->id]), $order->user->first_name . ' ' . $order->user->last_name) !!}</td>
                                         <td>
                                             @foreach($order->products as $product)
                                                 {{ $product->name . '(' . $product->pivot->quantity . ')' }},
@@ -34,7 +34,7 @@
                                         <td>{{ $order->getStatus() }}</td>
                                         <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
-                                            {!! Form::open([route('orders.destroy', [$order->id]), 'method' => 'delete']) !!}
+                                            {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 
                                             <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
 

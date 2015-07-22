@@ -10,14 +10,10 @@
                         <a href="{{ route('orders.index') }}" class="btn btn-xs btn-primary pull-right"> all orders</a>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-6">Client:</div>
-                            <div class="col-md-6">{{ $order->user->username }}</div>
-                        </div>
                         <div class="row-md">Order information</div>
                         <div class="row">
                             <div class="col-md-6">Order status</div>
-                            <div class="col-md-6">{{ $order->status }}</div>
+                            <div class="col-md-6">{{ $order->getStatus() }}</div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">Ordered at</div>
@@ -26,7 +22,7 @@
                         <hr>
                         <div class="row-md">Products:</div>
                         <div class="row-md">
-                            @if(!count($order->products()->get()))
+                            @if(!count($order->products))
                                 <div class="col-md">
                                     {!! Html::link(route('orders.create', ['id' => $order->id]), 'add products', ['class' => 'btn btn-small btn-warning']) !!}
                                 </div>
@@ -41,7 +37,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($order->products()->get() as $product)
+                                    @foreach($order->products as $product)
                                         <tr>
                                             <td>{!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}</td>
                                             <td>{!! Html::link(route('products.show', [$product->id]), $product->name) !!}</td>
@@ -62,7 +58,7 @@
                             @if($order->address !== null)
                                 <div class="row">
                                     <div class="col-md-6">Address type</div>
-                                    <div class="col-md-6">{{ $order->address->type }}</div>
+                                    <div class="col-md-6">{{ $order->address->getAddress() }}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">Country</div>
