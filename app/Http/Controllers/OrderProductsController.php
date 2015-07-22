@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Input;
 
 class OrderProductsController extends Controller {
 
+    /*
+     * middleware
+     */
+    public function __construct()
+    {
+        $this->middleware('orderCanEdit', ['only' => ['edit', 'update']]);
+    }
 	/**
 	 * Show the form for editing the specified resource.
 	 *
@@ -22,12 +29,18 @@ class OrderProductsController extends Controller {
 	 */
 	public function edit(Order $order, Product $product)
 	{
-        $select = ['-- Select --'];
-        $categories = Category::active()->lists('name', 'id');
+        dd($order);
+        if (!$order->isAuthorized()) {
+            return redirect(route('orders.edit', [$order->id]))->with('error', 'You can\'t change product');
+        }
+
         $products = Product::sell()->lists('name', 'id');
-        $products = array_merge($select, $products);
-        $categories = array_merge($select, $categories);
-        $pivot = $order->products()->find($product->id)->pivot;
+        $pivot = $order->products()->find($product->id);
+
+        if (!$pivot) {
+            return redirect()->back()->with('error', 'This product don\'t belongs to that order');
+        }
+        $pivot = $pivot->pivot;
 
         return view('orders.products.edit', compact('order', 'products', 'categories', 'product', 'pivot'));
 	}
@@ -40,6 +53,10 @@ class OrderProductsController extends Controller {
 	 */
 	public function update(Order $order, Product $product, OrderRequest $request)
 	{
+        if (!$order->isAuthorized()) {
+            return redirect(route('orders.edit', [$order->id]))->with('error', 'You can\'t change product');
+        }
+
         DB::transaction(function() use ($order, $product) {
             $oldQuantity = $order->products()->find($product->id)->pivot->quantity;
             $product->update(['quantity' => $product->quantity + $oldQuantity]);

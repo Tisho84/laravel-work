@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\Order;
 use App\Product;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,7 +35,6 @@ class OrdersController extends Controller
             $view .= '_client';
             $orders = $user->orders()->with('products')->get();
         }
-
         return view($view, compact('orders'));
     }
 
@@ -78,7 +78,7 @@ class OrdersController extends Controller
         $quantity = $request->get('quantity');
         $data = [];
         for ($i = 0; $i < count($product); $i++) {
-            if (!$product[$i] || !$quantity[$i] || $quantity[$i] <= 0) {
+            if (!$product[$i] || !$quantity[$i] || $quantity[$i] <= 0 || !is_integer((int)$quantity[$i])) {
                 $errors[] = 'product and quantity is required and > 0';
             }
             $data[] = [
@@ -125,8 +125,25 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        $order->load('products')->get();
+        if (!$order->isAuthorized()) {
+            return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
+        }
+        if ($order->status != 1 && !Auth::user()->is_admin) {
+            return redirect(route('orders.show', [$order->id]))->with('error', 'Order can\'t be edited.');
+        }
+        $order->load('products', 'products.category');
         return view('orders.edit', compact('order'));
+    }
+
+    /**
+     * update $order
+     */
+    public function update(Order $order)
+    {
+        $user = User::findOrFail(Input::get('user'));
+        $order->user()->associate($user);
+        $order->save();
+        return redirect(route('orders.index'))->with('success', 'Order owner changed');
     }
 
     /**
@@ -136,10 +153,19 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load('products', 'address', 'products.category');
-
-//        $order->address- = AddressType::getType($order->address->type);
-        return view('orders.show', compact('order'));
+        if(!$order->isAuthorized()){
+            return redirect(route('orders.index'))->with('error', 'Order not found.');
+        }
+        $users = array();
+        if (Auth::user()->is_admin) {
+            $users = User::lists('username', 'id');
+        }
+        $order->load('products', 'products.category');
+        $canEdit = $order->status == 1 ? true : false;
+        if (Auth::user()->is_admin) {
+            $canEdit = true;
+        }
+        return view('orders.show', compact('order', 'canEdit', 'users'));
     }
 
     /**
@@ -149,14 +175,15 @@ class OrdersController extends Controller
      */
     public function destroy($order)
     {
-        $user = Auth::user();
-        if (!$user->is_admin) { #check if user has that order
-            $order = $user->orders()->where('id', '=', $order->id)->first();
+        if (!$order->isAuthorized()) {
+            return redirect()->back()->with('error', 'Order not deleted.');
         }
+
         if ($order->status == 1) {
             $order->delete();
         }
-        if ($user->is_admin && $order->status != 1) {
+
+        if (Auth::user()->is_admin && $order->status != 1) {
             $products = $order->products()->get();
             DB::transaction(function() use ($products, $order) {
                 foreach ($products as $product) { #increase quantity if status != 1
@@ -167,18 +194,4 @@ class OrdersController extends Controller
         }
         return redirect()->back()->with('success', 'Order deleted.');
     }
-
-    public function getProductsByCategory($id)
-    {
-        $category = Category::findOrFail($id);
-        $products = $category->products()
-            ->sell()
-            ->get();
-        $productsJSon = [];
-        foreach($products as $product) {
-            $productsJSon[$product->id] = ['name' => $product->name, 'price' => $product->price];
-        }
-        return $productsJSon;
-    }
-
 }

@@ -122,11 +122,4 @@ class ProductsController extends Controller {
         return redirect('products');
 
 	}
-
-    public function getProductPrice($id)
-    {
-        $product = Product::sell()->findOrFail($id);
-        return $product->price;
-    }
-
 }

@@ -23,7 +23,9 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description }}</td>
                                     <td>{{ $product->price }}</td>
-                                    <td>{!! Html::link(route('orders.create', ['product' => $product->id]), 'order now') !!}</td>
+                                    <td>
+                                        {!! Html::link(route('orders.create', ['product' => $product->id]), '', ['class' => 'btn btn-default glyphicon glyphicon-shopping-cart']) !!}
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

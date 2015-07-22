@@ -15,6 +15,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>Id</th>
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Active</th>
@@ -24,6 +25,7 @@
                             <tbody>
                             @foreach($categories as $category)
                                 <tr>
+                                    <td>{{ $category->id }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->description }}</td>
                                     <td>{{ $category->active ? 'yes' : 'no' }}</td>

@@ -12,19 +12,33 @@
                     <div class="panel-body">
                         <div class="row-md">Order information</div>
                         <div class="row">
+                            <div class="col-md-6">Ordered by</div>
+                            <div class="col-md-6">{{ $order->user->username }}</div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">Order status</div>
-                            <div class="col-md-6">{{ $order->getStatus() }}</div>
+                            <b><div class="col-md-6">{{ $order->getStatus() }}</div></b>
                         </div>
                         <div class="row">
                             <div class="col-md-6">Ordered at</div>
                             <div class="col-md-6">{{ $order->updated_at }}</div>
                         </div>
                         <hr>
+                        @if(Auth::user()->is_admin)
+                            {!! Form::open(['route' => ['orders.update', $order->id], 'method' => 'put']) !!}
+                                <div class="form-group">
+                                    {!! Form::label('user', 'users', ['class' => 'control-label']) !!}
+                                    {!! Form::select('user', $users, $order->user->id , ['class' => 'form-control']) !!}
+                                </div>
+                                {!! Form::submit('save', ['class' => 'btn btn-default']) !!}
+                            {!! Form::close() !!}
+                            <hr>
+                        @endif
                         <div class="row-md">Products:</div>
                         <div class="row-md">
                             @if(!count($order->products))
                                 <div class="col-md">
-                                    {!! Html::link(route('orders.create', ['id' => $order->id]), 'add products', ['class' => 'btn btn-small btn-warning']) !!}
+                                    {!! Html::link(route('orders.create', ['id' => $order->id]), 'add products', ['class' => 'btn btn-small btn-primary']) !!}
                                 </div>
                             @else
                                 <table class="table">
@@ -42,14 +56,21 @@
                                             <td>{!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}</td>
                                             <td>{!! Html::link(route('products.show', [$product->id]), $product->name) !!}</td>
                                             <td>{{ $product->pivot->quantity }}</td>
-                                            <td>{{ $product->pivot->quantity * $product->price }}</td>
+                                            <td>{{ $product->price }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
-                                <div class="col-md">
-                                    {!! Html::link(route('orders.edit', [$order->id]), 'edit products', ['class' => 'btn btn-default']) !!}
+                                <div class="row">
+                                    <div class="col-md-2 pull-right">
+                                        Total - {{ $order->getAmount() }}
+                                    </div>
                                 </div>
+                                @if($canEdit)
+                                    <div class="col-md">
+                                        {!! Html::link(route('orders.edit', [$order->id]), 'edit products', ['class' => 'btn btn-default']) !!}
+                                    </div>
+                                @endif
                             @endif
                         </div>
                         <hr>
@@ -76,15 +97,17 @@
                                     <div class="col-md-6">Zip</div>
                                     <div class="col-md-6">{{ $order->address->zip }}</div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'edit', ['class' => 'btn btn-default']) !!}
+                                @if($canEdit)
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'edit', ['class' => 'btn btn-default']) !!}
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @else
                                 <div class="row">
                                     <div class="col-md-6">
-                                        {!! Html::link(route('orders.address.create', [$order->id]), 'add address', ['class' => 'btn btn-small btn-warning']) !!}
+                                        {!! Html::link(route('orders.address.create', [$order->id]), 'add', ['class' => 'btn btn-small btn-primary']) !!}
                                     </div>
                                 </div>
                             @endif

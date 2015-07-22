@@ -11,16 +11,16 @@
                     <div class="panel-body">
                         <table class="table">
                             <thead>
-                            <tr>
-                                <th>Product Category</th>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th></th>
-                            </tr>
+                                <tr>
+                                    <th>Product Category</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th></th>
+                                </tr>
                             </thead>
                             <tbody>
-                            @foreach($order->products()->get() as $product)
+                            @foreach($order->products as $product)
                                 <tr>
                                     <td>
                                         {!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}
@@ -30,8 +30,8 @@
                                     <td>{{ $product->pivot->quantity * $product->price }}</td>
                                     <td>
                                         {!! Form::open(['route' => ['orders.products.destroy', $order->id, $product->id], 'method' => 'delete']) !!}
-                                        <a href="{{ route('orders.products.edit', [$order->id, $product->id])}}" class="btn btn-xs btn-success">edit</a>
-                                        {!! Form::submit('remove', ['class' => 'btn btn-danger btn-xs']) !!}
+                                            <a href="{{ route('orders.products.edit', [$order->id, $product->id])}}" class="btn btn-xs btn-success">edit</a>
+                                            {!! Form::submit('remove', ['class' => 'btn btn-danger btn-xs']) !!}
                                         {!! Form::close() !!}
                                     </td>
                                 </tr>

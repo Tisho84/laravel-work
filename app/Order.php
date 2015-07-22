@@ -2,6 +2,7 @@
 
 use App\Classes\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model {
 
@@ -40,6 +41,15 @@ class Order extends Model {
             $this->amount = $amount;
         }
         return $this->amount;
+    }
+
+    public function isAuthorized()
+    {
+        $order = true;
+        if (!Auth::user()->is_admin) { #check if user has that order
+            $order = Auth::user()->orders()->where('id', '=', $this->id)->first();
+        }
+        return $order;
     }
 
 }

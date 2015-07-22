@@ -13,6 +13,7 @@
                         <table class="table">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Category</th>
                                 <th>Name</th>
                                 <th>Info</th>
@@ -26,6 +27,7 @@
                             <tbody>
                             @foreach($products as $product)
                                 <tr>
+                                    <td>{{ $product->id }}</td>
                                     <td>{!! Html::link(route('categories.show', [$product->category->id]), $product->category->name) !!}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description }}</td>
