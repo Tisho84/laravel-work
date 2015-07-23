@@ -1,6 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use App\Product;
 
 class OrderRequest extends Request {
 
@@ -21,9 +22,16 @@ class OrderRequest extends Request {
 	 */
 	public function rules()
 	{
+		$max = 10;
+		if ($this->get('product_id')) {
+			$product = Product::find($this->get('product_id'));
+			if ($product) {
+				$max = $product->quantity;
+			}
+		}
 		return [
 			'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|between:1,10'
+            'quantity' => 'required|integer|between:1,' . $max
 		];
 	}
 

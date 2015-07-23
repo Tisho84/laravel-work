@@ -54,4 +54,17 @@ class Order extends Model {
         }
         return $flag;
     }
+
+    public function setQuantity($increase)
+    {
+        $this->load('products');
+        foreach ($this->products as $product) {
+            if ($increase) {
+                $newQuantity = $product->quantity + $product->pivot->quantity;
+            } else {
+                $newQuantity = $product->quantity - $product->pivot->quantity;
+            }
+            $product->update(['quantity' => $newQuantity]);
+        }
+    }
 }

@@ -5,10 +5,16 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Orders
-                        <div class="row pull-right">
-                            <div class="col-xs-3">{!! Html::link(route('orders.create'), 'new order', ['class' => "btn btn-primary btn-xs"]) !!}</div>
-                            <div class=" col-xs-3">{!! Html::link(route('orders.create'), 'orders need confirmation', ['class' => "btn btn-default btn-xs"]) !!}</div>
+                    <div class="panel-heading">
+                        <div>
+                            Orders
+                            <div class="pull-right">
+                                {!! Html::link(route('orders.create'), 'new order', ['class' => "btn btn-primary btn-xs"]) !!}
+                                {!! Html::link(route('orders.index'), 'all orders', ['class' => "btn btn-default btn-xs"]) !!}
+                                @foreach($statuses as $id => $status)
+                                    {!! Html::link(route('orders.index', ['status=' . $id]), $status, ['class' => "btn btn-default btn-xs"]) !!}
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
@@ -41,9 +47,8 @@
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
 
-                                            <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
-
-                                            {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                                                <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
+                                                {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
 
                                             {!! Form::close() !!}
                                         </td>

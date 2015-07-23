@@ -28,16 +28,25 @@ class OrdersController extends Controller
     public function index()
     {
         $view = 'orders.index';
+        $statuses = [];
         $user = Auth::user();
         if ($user->is_admin) {
-            $orders = Order::with('user', 'products')->get();
+            $statuses = OrderStatus::$statuses;
+            if (Input::get('status')) {
+                $orders = Order::where('status', Input::get('status'))->with('user', 'products')->get();
+            } else {
+                $orders = Order::with('user', 'products')->get();
+            }
         } else {
             $view .= '_client';
-            $orders = $user->orders()->with('products')->get();
+            if (!Input::get('status')) {
+                $orders = $user->orders()->with('products')->get();
+            } else {
+                $orders = $user->orders()->where('status', Input::get('status'))->with('products')->get();
+            }
         }
-        return view($view, compact('orders'));
+        return view($view, compact('orders', 'statuses'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -144,9 +153,19 @@ class OrdersController extends Controller
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $user = User::findOrFail(Input::get('user'));
-        $order->user()->associate($user);
-        $order->save();
-        return redirect(route('orders.index'))->with('success', 'Order owner changed');
+        DB::transaction(function() use ($order, $user){
+            $order->user()->associate($user)->save();
+            if ($order->status != Input::get('status')) { #if status changed
+                if ($order->status == 1) { #decrease
+                    $order->setQuantity(false);
+                } else if (Input::get('status') == 1) { #increase
+                    $order->setQuantity(true);
+                }
+                $order->update(['status' => Input::get('status')]);
+            }
+        });
+
+        return redirect(route('orders.index'))->with('success', 'Order data changed');
     }
 
     /**
@@ -159,16 +178,21 @@ class OrdersController extends Controller
         if(!$order->isAuthorized($canEdit = false)){
             return redirect(route('orders.index'))->with('error', 'Order not found.');
         }
+
         $users = array();
         if (Auth::user()->is_admin) {
             $users = User::lists('username', 'id');
         }
-        $order->load('products', 'products.category');
+
+        $order->load('user', 'products', 'products.category');
         $canEdit = $order->status == 1 ? true : false;
+        $canCancel = $order->status == 2 || $order->status == 3? true : false; #if status is (Processed, Prepared) allow cancel
         if (Auth::user()->is_admin) {
             $canEdit = true;
+            $canCancel = true;
         }
-        return view('orders.show', compact('order', 'canEdit', 'users'));
+        $statuses = OrderStatus::$statuses;
+        return view('orders.show', compact('order', 'canEdit', 'users', 'statuses', 'canCancel'));
     }
 
     /**
@@ -176,7 +200,7 @@ class OrdersController extends Controller
      * @param $id
      * @return mixed
      */
-    public function destroy($order)
+    public function destroy(Order $order)
     {
         if (!$order->isAuthorized()) {
             return redirect()->back()->with('error', 'Order not deleted.');
@@ -194,5 +218,32 @@ class OrdersController extends Controller
             });
         }
         return redirect()->back()->with('success', 'Order deleted.');
+    }
+
+    public function cancel($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        if (!$order->isAuthorized(false)) {
+            return redirect()->back()->with('error', 'Order not canceled u don\'t have permissions.');
+        }
+        $return = $order->status != 2 && $order->status != 3 ? true: false; #if status is (Processed, Prepared) allow cancel)
+
+        $return = Auth::user()->is_admin || !$return ? false: true; #if admin pass to cancel
+
+        if($return) {
+            return redirect()->back()->with('error', 'Order can\'t be canceled.');
+        }
+
+        if ($order->status != 100) {
+            DB::transaction(function () use ($order) {
+                $order->update(['status' => 100]); #update order to canceled
+                $order->setQuantity($increase = true); #increase products quantity
+            });
+        } else {
+            return redirect()->back()->with('error', 'Order was already canceled.');
+        }
+
+        return redirect(route('orders.index'))->with('success', 'Order was canceled');
+
     }
 }

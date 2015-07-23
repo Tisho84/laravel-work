@@ -5,8 +5,17 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Orders
-                        <a href="{{url('orders/create')}}" class="pull-right btn btn-primary btn-xs">new order</a>
+                    <div class="panel-heading">
+                        <div>
+                            Orders
+                            <div class="pull-right">
+                                {!! Html::link(route('orders.create'), 'new order', ['class' => "btn btn-primary btn-xs"]) !!}
+                                {!! Html::link(route('orders.index', ['status=']), 'all', ['class' => "btn btn-default btn-xs"]) !!}
+                                {!! Html::link(route('orders.index', ['status=5']), 'finished', ['class' => "btn btn-default btn-xs"]) !!}
+                                {!! Html::link(route('orders.index',['status=100']), 'canceled', ['class' => "btn btn-default btn-xs"]) !!}
+                                {!! Html::link(route('orders.index',['status=1']), 'pending', ['class' => "btn btn-default btn-xs"]) !!}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="panel-body">
@@ -34,9 +43,9 @@
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
                                                 <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>
-                                            @if($order->status == 1)
-                                                {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
-                                            @endif
+                                                @if($order->status == 1)
+                                                    {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                                                @endif
                                             {!! Form::close() !!}
                                         </td>
                                     </tr>

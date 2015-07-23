@@ -35,7 +35,8 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::resource('products', 'ProductsController');
     Route::resource('categories', 'CategoriesController');
-    
+    Route::get('orders/{order}/cancel', ['as' => 'orders.cancel', 'uses' => 'OrdersController@cancel']);
+
     Route::group(['middleware' => 'isAdmin'], function(){
         Route::resource('users', 'UsersController');
     });

@@ -30,6 +30,10 @@
                                     {!! Form::label('user', 'users', ['class' => 'control-label']) !!}
                                     {!! Form::select('user', $users, $order->user->id , ['class' => 'form-control']) !!}
                                 </div>
+                                <div class="form-group">
+                                    {!! Form::label('status', 'Status', ['class' => 'control-label']) !!}
+                                    {!! Form::select('status', $statuses, $order->status , ['class' => 'form-control']) !!}
+                                </div>
                                 {!! Form::submit('save', ['class' => 'btn btn-default']) !!}
                             {!! Form::close() !!}
                             <hr>
@@ -65,12 +69,17 @@
                                     <div class="col-md-2 pull-right">
                                         Total - {{ $order->getAmount() }}
                                     </div>
+                                    @if($canEdit)
+                                        <div class="col-md-2">
+                                            {!! Html::link(route('orders.edit', [$order->id]), 'Edit', ['class' => 'btn btn-default']) !!}
+                                        </div>
+                                    @endif
+                                    @if($canCancel)
+                                        <div class="col-md-2">
+                                            {!! Html::link(route('orders.cancel', [$order->id]), 'Cancel', ['class' => 'btn btn-default']) !!}
+                                        </div>
+                                    @endif
                                 </div>
-                                @if($canEdit)
-                                    <div class="col-md">
-                                        {!! Html::link(route('orders.edit', [$order->id]), 'edit products', ['class' => 'btn btn-default']) !!}
-                                    </div>
-                                @endif
                             @endif
                         </div>
                         <hr>
@@ -100,14 +109,14 @@
                                 @if($canEdit)
                                     <div class="row">
                                         <div class="col-md-6">
-                                            {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'edit', ['class' => 'btn btn-default']) !!}
+                                            {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'Edit', ['class' => 'btn btn-default']) !!}
                                         </div>
                                     </div>
                                 @endif
                             @else
                                 <div class="row">
                                     <div class="col-md-6">
-                                        {!! Html::link(route('orders.address.create', [$order->id]), 'add', ['class' => 'btn btn-small btn-primary']) !!}
+                                        {!! Html::link(route('orders.address.create', [$order->id]), 'Add', ['class' => 'btn btn-small btn-primary']) !!}
                                     </div>
                                 </div>
                             @endif
