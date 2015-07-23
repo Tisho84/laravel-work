@@ -64,7 +64,7 @@ class OrdersController extends Controller
             $selectedProducts[] = [ 'product_id' => Input::get('product'), 'quantity' => 1 ];
         }
         $products = $select + $products;
-        return view('orders.create', compact('products', 'order', 'selectedProducts'));
+        return view('orders.create', compact('products', 'selectedProducts'));
     }
 
     /**
@@ -74,6 +74,9 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
+        if(!Auth::user()->active) {
+            return redirect()->back()->with('error', 'You cant shop from our store(not active)');
+        }
         $product = $request->get('product');
         $quantity = $request->get('quantity');
         $data = [];
@@ -105,7 +108,7 @@ class OrdersController extends Controller
             return redirect()->back()->withErrors($errors)->with('products', $data);
         }
 
-        DB::transaction(function() use ($data){ #todo quantity --
+        DB::transaction(function() use ($data){ #quantity is reduced when order status is changed
             $newData = [];
             foreach ($data as $value) {
                 $newData[$value['product_id']] = ['quantity' => $value['quantity']];
@@ -117,7 +120,7 @@ class OrdersController extends Controller
             ]);
             $order->products()->attach($newData);
         });
-        return redirect(route('orders.index'))->with('success', 'Order successful');
+        return redirect(route('orders.index'))->with('success', 'Order successful created');
     }
 
     /**
@@ -128,9 +131,6 @@ class OrdersController extends Controller
         if (!$order->isAuthorized()) {
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
-        if ($order->status != 1 && !Auth::user()->is_admin) {
-            return redirect(route('orders.show', [$order->id]))->with('error', 'Order can\'t be edited.');
-        }
         $order->load('products', 'products.category');
         return view('orders.edit', compact('order'));
     }
@@ -140,6 +140,9 @@ class OrdersController extends Controller
      */
     public function update(Order $order)
     {
+        if (!$order->isAuthorized()) {
+            return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
+        }
         $user = User::findOrFail(Input::get('user'));
         $order->user()->associate($user);
         $order->save();
@@ -153,7 +156,7 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-        if(!$order->isAuthorized()){
+        if(!$order->isAuthorized($canEdit = false)){
             return redirect(route('orders.index'))->with('error', 'Order not found.');
         }
         $users = array();
@@ -181,9 +184,7 @@ class OrdersController extends Controller
 
         if ($order->status == 1) {
             $order->delete();
-        }
-
-        if (Auth::user()->is_admin && $order->status != 1) {
+        } else if (Auth::user()->is_admin && $order->status != 1) {
             $products = $order->products()->get();
             DB::transaction(function() use ($products, $order) {
                 foreach ($products as $product) { #increase quantity if status != 1

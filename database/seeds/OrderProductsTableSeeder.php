@@ -13,7 +13,7 @@ class OrderProductsTableSeeder extends Seeder
     {
         $faker = Factory::create();
         $orders = Order::lists('id');
-        $products = Product::lists('id');
+        $products = Product::sell()->lists('id');
         foreach(range(1, 45) as $index) {
             if($index > 29){
                 $index -= 29;

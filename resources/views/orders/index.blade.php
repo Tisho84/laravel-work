@@ -6,13 +6,17 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
                     <div class="panel-heading">Orders
-                        <a href="{{url('orders/create')}}" class="pull-right btn btn-primary btn-xs">new order</a>
+                        <div class="row pull-right">
+                            <div class="col-xs-3">{!! Html::link(route('orders.create'), 'new order', ['class' => "btn btn-primary btn-xs"]) !!}</div>
+                            <div class=" col-xs-3">{!! Html::link(route('orders.create'), 'orders need confirmation', ['class' => "btn btn-default btn-xs"]) !!}</div>
+                        </div>
                     </div>
 
                     <div class="panel-body">
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>Id</th>
                                     <th>Client</th>
                                     <th>Products</th>
                                     <th>Amount</th>
@@ -24,6 +28,7 @@
                             @if(count($orders) > 0)
                                 @foreach($orders as $order)
                                     <tr>
+                                        <td>{{ $order->id }}</td>
                                         <td>{!! Html::link(route('users.show', [$order->user->id]), $order->user->first_name . ' ' . $order->user->last_name) !!}</td>
                                         <td>
                                             @foreach($order->products as $product)

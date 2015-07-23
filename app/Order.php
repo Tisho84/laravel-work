@@ -43,13 +43,15 @@ class Order extends Model {
         return $this->amount;
     }
 
-    public function isAuthorized()
+    public function isAuthorized($canEdit = true) #order belong to user and can be edited (admin can do all)
     {
-        $order = true;
+        $flag = true;
         if (!Auth::user()->is_admin) { #check if user has that order
-            $order = Auth::user()->orders()->where('id', '=', $this->id)->first();
+            $flag = Auth::user()->orders()->find($this->id)->first();
+            if ($flag && $canEdit) { #order is editable
+                $flag = $this->status == 1 ? true: false;
+            }
         }
-        return $order;
+        return $flag;
     }
-
 }

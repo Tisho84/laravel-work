@@ -76,7 +76,7 @@
                                 </button>
                             </div>
                             <div class="col-md-4">
-                            {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
+                                {!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
                             </div>
                         </div>
 
