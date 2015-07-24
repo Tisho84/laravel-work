@@ -41,23 +41,39 @@
                         </div>
                         @if(count($orders))
                             <div class="row">
-                                <div class="col-md-4">Orders:</div>
-                                <div class="col-md-4">
-                                    <ul>
-                                        @foreach($orders as $k => $order)
-                                            <?php $k++; ?>
-                                            <li>
-                                                {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
-
-                                                {!! Html::link(route('orders.show', [$order->id]), 'Order No.' . $k) !!}
-
-                                                {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
-
-                                                {!! Form::close() !!}
-                                            </li>
+                                <div class="col-lg-12"><b>Orders history:</b></div>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Products</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Ordered on</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($orders as $order)
+                                            <tr>
+                                                <td>{{ $order->id }}</td>
+                                                <td>
+                                                    @foreach($order->products as $product)
+                                                        {{ $product->name . '(' . $product->pivot->quantity . ')' }},
+                                                    @endforeach
+                                                </td>
+                                                <td>{{ $order->getAmount() }}</td>
+                                                <td>{{ $order->getStatus() }}</td>
+                                                <td>{{ $order->updated_at->diffForHumans() }}</td>
+                                                <td>
+                                                    {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
+                                                        {!! Html::link(route('orders.show', [$order]), 'Show', ['class' => "btn btn-xs btn-warning"]) !!}
+                                                        {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                                                    {!! Form::close() !!}
+                                                </td>
+                                            </tr>
                                         @endforeach
-                                    </ul>
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         @endif
                     </div>

@@ -1,0 +1,1 @@
+Your order was delivered successfully at {{ $city }} - {{ $address }}!

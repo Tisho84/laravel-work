@@ -56,7 +56,7 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('orders');//, 'orders.products');
+        $user->load('orders', 'orders.products');
         $orders = $user->orders()->get();
         
         return view('users.show', compact('user', 'orders'));

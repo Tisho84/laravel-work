@@ -1,0 +1,1 @@
+Your order was shipped successfully expect it soon at your delivered address!

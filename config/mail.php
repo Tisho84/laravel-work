@@ -15,7 +15,7 @@ return [
 	|
 	*/
 
-	'driver' => env('MAIL_DRIVER', 'smtp'),
+	'driver' => env('MAIL_DRIVER', 'mandrill'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return [
 	|
 	*/
 
-	'from' => ['address' => null, 'name' => null],
+	'from' => ['address' => env('MAIL_ADDRESS', 'tihomir.kamenov@1stonlinesolutions.com'), 'name' => env('MAIL_NAME', 'Tihomir Kamenov')],
 
 	/*
 	|--------------------------------------------------------------------------

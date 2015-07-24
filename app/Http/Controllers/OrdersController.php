@@ -3,6 +3,7 @@
 use App\Category;
 use App\Classes\AddressType;
 use App\Classes\OrderStatus;
+use App\Events\OrderWasPlaced;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -128,6 +129,7 @@ class OrdersController extends Controller
                 'address_id' => null,
             ]);
             $order->products()->attach($newData);
+            event(new OrderWasPlaced(Auth::user(), $order));
         });
         return redirect(route('orders.index'))->with('success', 'Order successful created');
     }
@@ -230,18 +232,14 @@ class OrdersController extends Controller
 
         $return = Auth::user()->is_admin || !$return ? false: true; #if admin pass to cancel
 
-        if($return) {
+        if($return || $order->status == 1 || $order->status == 100) {
             return redirect()->back()->with('error', 'Order can\'t be canceled.');
         }
 
-        if ($order->status != 100) {
-            DB::transaction(function () use ($order) {
-                $order->update(['status' => 100]); #update order to canceled
-                $order->setQuantity($increase = true); #increase products quantity
-            });
-        } else {
-            return redirect()->back()->with('error', 'Order was already canceled.');
-        }
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => 100]); #update order to canceled
+            $order->setQuantity($increase = true); #increase products quantity
+        });
 
         return redirect(route('orders.index'))->with('success', 'Order was canceled');
 

@@ -10,6 +10,13 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test', function(){
+
+});
+
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
