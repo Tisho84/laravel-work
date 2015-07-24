@@ -1,7 +1,12 @@
 <?php namespace App\Providers;
 
+use App\Events\OrderWasCanceled;
 use App\Events\OrderWasPlaced;
-use App\Handlers\Events\OrderConfirmation;
+use App\Events\Registered;
+use App\Handlers\Events\ClientRegistration;
+use App\Handlers\Events\OrderAdminsConfirmation;
+use App\Handlers\Events\OrderClientCancel;
+use App\Handlers\Events\OrderClientConfirmation;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -16,9 +21,16 @@ class EventServiceProvider extends ServiceProvider {
 		'event.name' => [
 			'EventListener',
 		],
+		Registered::class => [
+			ClientRegistration::class
+		],
         OrderWasPlaced::class => [
-            OrderConfirmation::class
-        ]
+            OrderClientConfirmation::class,
+			OrderAdminsConfirmation::class
+        ],
+		OrderWasCanceled::class => [
+			OrderClientCancel::class
+		]
 	];
 
 	/**

@@ -3,6 +3,7 @@
 use App\Category;
 use App\Classes\AddressType;
 use App\Classes\OrderStatus;
+use App\Events\OrderWasCanceled;
 use App\Events\OrderWasPlaced;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -239,6 +240,7 @@ class OrdersController extends Controller
         DB::transaction(function () use ($order) {
             $order->update(['status' => 100]); #update order to canceled
             $order->setQuantity($increase = true); #increase products quantity
+            event(new OrderWasCanceled($order, Auth::user()));
         });
 
         return redirect(route('orders.index'))->with('success', 'Order was canceled');

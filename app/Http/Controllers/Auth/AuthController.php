@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Auth;
 
+use App\Events\Registered;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
@@ -69,7 +70,9 @@ class AuthController extends Controller {
     
     public function postRegister(UserCreateRequest $request)
 	{
-		$this->auth->login($this->registrar->create($request->all()));
+		$user = $this->registrar->create($request->all());
+		$this->auth->login($user);
+		event(new Registered($user));
 
 		return redirect($this->redirectPath());
 	}

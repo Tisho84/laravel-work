@@ -138,7 +138,7 @@ return [
         'App\Providers\RouteServiceProvider',
         'Barryvdh\Debugbar\ServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
-
+        'App\Providers\HelperServiceProvider',
     ],
     /*
     |--------------------------------------------------------------------------
