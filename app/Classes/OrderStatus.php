@@ -8,11 +8,12 @@
 class OrderStatus
 {
     public static $statuses = [
-        1 => 'Pending', #quantity not yet reduced
+        1 => 'Pending',
         2 => 'Processed',
         3 => 'Prepared',
-        4 => 'Paid',
-        5 => 'Delivered',
+        4 => 'Traveling',
+        5 => 'Paid',
+        6 => 'Delivered',
         100 => 'Cancelled'
     ];
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use App\Product;
 use App\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -158,12 +159,18 @@ class OrdersController extends Controller
         DB::transaction(function() use ($order, $user){
             $order->user()->associate($user)->save();
             if ($order->status != Input::get('status')) { #if status changed
+                $data = ['status' => Input::get('status')];
                 if ($order->status == 1) { #decrease
                     $order->setQuantity(false);
                 } else if (Input::get('status') == 1) { #increase
                     $order->setQuantity(true);
                 }
-                $order->update(['status' => Input::get('status')]);
+
+                if (Input::get('status') == 2) {
+                   $data['processed_on'] = Carbon::now();
+                }
+
+                $order->update($data);
             }
         });
 

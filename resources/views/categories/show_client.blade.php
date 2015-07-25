@@ -8,24 +8,29 @@
                     <div class="panel-body">
                         @if(count($products))
                             <div class="row">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Price</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($products as $product)
-                                        <tr>
-                                            <td>{{ $product->name }}</td>
-                                            <td>{{ $product->price }}</td>
-                                            <td>{!! Html::link(route('orders.create', ['product' => $product->id]), '', ['class' => 'btn btn-default glyphicon glyphicon-shopping-cart']) !!}</td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
+                                <div class="col-md-12">Category: {{ $category->name }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Price</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($products as $product)
+                                            <tr>
+                                                <td>{{ $product->name }}</td>
+                                                <td>{{ $product->price }}</td>
+                                                <td>{!! Html::link(route('orders.create', ['product' => $product->id]), '', ['class' => 'btn btn-default glyphicon glyphicon-shopping-cart']) !!}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         @endif
                     </div>
