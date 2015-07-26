@@ -1,1 +1,1 @@
-Your order was delivered successfully at {{ $city }} - {{ $address }}!
+Your order was delivered successfully in {{ $city }} - {{ $address }} at {{ $date }}!

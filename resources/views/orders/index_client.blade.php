@@ -39,7 +39,7 @@
                                         </td>
                                         <td>{{ $order->getAmount() }}</td>
                                         <td>{{ $order->getStatus() }}</td>
-                                        <td>{{ $order->updated_at->diffForHumans() }}</td>
+                                        <td>{{ $order->created_at->diffForHumans() }}</td>
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}
                                                 <a href="{{ route('orders.show', [$order])}}" class="btn btn-xs btn-warning">details</a>

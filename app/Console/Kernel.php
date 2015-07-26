@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel {
 	protected $commands = [
 		'App\Console\Commands\Inspire',
         'App\Console\Commands\ProcessOrder',
-        'App\Console\Commands\TravelOrder'
+        'App\Console\Commands\TravelOrder',
+        'App\Console\Commands\DeliveredOrder'
 	];
 
 	/**
@@ -26,8 +27,9 @@ class Kernel extends ConsoleKernel {
 	{
 //		$schedule->command('inspire')
 //				 ->hourly();
-        $schedule->command('orders:processed')->everyFiveMinutes();//hourly();
-        $schedule->command('orders:travel')->everyFiveMinutes();
+        $schedule->command('orders:processed')->hourly();
+        $schedule->command('orders:travel')->dailyAt('18:30');
+        $schedule->command('orders:deliver')->dailyAt('19:00');
     }
 
 }

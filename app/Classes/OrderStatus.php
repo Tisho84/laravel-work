@@ -10,10 +10,9 @@ class OrderStatus
     public static $statuses = [
         1 => 'Pending',
         2 => 'Processed',
-        3 => 'Prepared',
+        3 => 'Prepared', #order and products are ready to dispatch
         4 => 'Traveling',
-        5 => 'Paid',
-        6 => 'Delivered',
+        5 => 'Delivered',
         100 => 'Cancelled'
     ];
 

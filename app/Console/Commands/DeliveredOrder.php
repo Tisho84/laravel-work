@@ -1,27 +1,27 @@
 <?php namespace App\Console\Commands;
 
-use App\Events\OrderWasProcessed;
+use App\Events\OrderWasDelivered;
 use App\Order;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ProcessOrder extends Command {
+class DeliveredOrder extends Command {
 
 	/**
 	 * The console command name.
 	 *
 	 * @var string
 	 */
-	protected $name = 'orders:processed';
+	protected $name = 'orders:deliver';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Update orders from pending to processed.';
+	protected $description = 'Change order status to delivered.';
 
 	/**
 	 * Create a new command instance.
@@ -40,13 +40,17 @@ class ProcessOrder extends Command {
 	 */
 	public function fire()
 	{
-		$orders = Order::with('user')->where('status', 1)->whereNotNull('address_id')->get();
-        if (count($orders)) {
+        $orders = Order::with('user', 'address')->where('status', 4)->where('expected_delivery_on', '<', Carbon::now())->get();
+        if ($orders) {
             foreach ($orders as $order) {
-                $order->update(['status' => 2, 'processed_on' => Carbon::now()]);
-                event(new OrderWasProcessed($order));
+                $order->update([
+                    'status' => 5,
+                    'delivered_on' => Carbon::now()
+                ]);
+                event(new OrderWasDelivered($order));
             }
         }
+
 	}
 
 	/**
@@ -57,7 +61,7 @@ class ProcessOrder extends Command {
 	protected function getArguments()
 	{
 		return [
-		//	['example', InputArgument::REQUIRED, 'An example argument.'],
+			//['example', InputArgument::REQUIRED, 'An example argument.'],
 		];
 	}
 

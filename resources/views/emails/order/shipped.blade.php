@@ -1,1 +1,1 @@
-Your order was shipped successfully expect it soon at your delivered address!
+Your order was shipped successfully expect it before {{ $expectedDate }} at your delivery address!

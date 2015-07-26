@@ -73,7 +73,7 @@ class OrdersController extends Controller
         foreach ($productsModel as $product) {
             $products[$product->id] = $product->name . ' - price ' . $product->price;
         }
-        if (Input::get('product') && empty($selectedProducts)) {
+        if (Input::get('product') && empty($selectedProducts)) { #product clicked from link
             $selectedProducts[] = [ 'product_id' => Input::get('product'), 'quantity' => 1 ];
         }
         $products = $select + $products;
@@ -158,8 +158,12 @@ class OrdersController extends Controller
         $user = User::findOrFail(Input::get('user'));
         DB::transaction(function() use ($order, $user){
             $order->user()->associate($user)->save();
-            if ($order->status != Input::get('status')) { #if status changed
-                $order->update(['status' => Input::get('status')]);
+            $oldStatus = $order->status;
+            $newStatus = Input::get('status');
+            if ($oldStatus != $newStatus) { #if status changed
+                $data = updateStatus($order, $newStatus);
+                $data['status'] = $newStatus;
+                $order->update($data);
             }
         });
 
@@ -184,7 +188,8 @@ class OrdersController extends Controller
 
         $order->load('user', 'products', 'products.category');
         $statuses = OrderStatus::$statuses;
-        return view('orders.show', compact('order', 'users', 'statuses'));
+        $dates = showOrderDates($order);
+        return view('orders.show', compact('order', 'users', 'statuses', 'dates'));
     }
 
     /**
@@ -211,7 +216,7 @@ class OrdersController extends Controller
             return redirect()->back()->with('error', 'Order not canceled u don\'t have permissions.');
         }
 
-        $return = $order->canCancel();//$order->status != 1 && $order->status != 2 && $order->status != 3 ? true: false; #if status is (New,Processed, Prepared) allow cancel)
+        $return = $order->canCancel();
 
         if(!$return || $order->status == 100) {
             return redirect()->back()->with('error', 'Order can\'t be canceled.');

@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Classes\OrderStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,26 @@ class Order extends Model {
     {
         //only order_id and product_id listed at attributes when using pivot
         return $this->belongsToMany('App\Product', 'order_products')->withPivot(['quantity', 'id']);
+    }
+
+    public function getProcessedOnAttribute($value)
+    {
+        return getCarbonDate($value);
+    }
+
+    public function getShippedOnAttribute($value)
+    {
+        return getCarbonDate($value);
+    }
+
+    public function getExpectedDeliveryOnAttribute($value)
+    {
+        return getCarbonDate($value);
+    }
+
+    public function getDeliveredOnAttribute($value)
+    {
+        return getCarbonDate($value);
     }
 
     public function getStatus()

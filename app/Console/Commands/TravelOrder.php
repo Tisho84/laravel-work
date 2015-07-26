@@ -1,5 +1,8 @@
 <?php namespace App\Console\Commands;
 
+use App\Events\OrderShippedOn;
+use App\Order;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +21,7 @@ class TravelOrder extends Command {
 	 *
 	 * @var string
 	 */
-	protected $description = 'Command description.';
+	protected $description = 'Set orders statuses to traveling.';
 
 	/**
 	 * Create a new command instance.
@@ -32,12 +35,22 @@ class TravelOrder extends Command {
 
 	/**
 	 * Execute the console command.
-	 *
+	 * updating status prepared to traveling
 	 * @return mixed
 	 */
 	public function fire()
 	{
-        Category::create(['name' => 'test2', 'description' => 't2est']);
+        $orders = Order::with('user')->where('status', 3)->get();
+        if ($orders) {
+            foreach ($orders as $order) {
+                $order->update([
+                    'status' => 4,
+                    'shipped_on' => Carbon::now(),
+                    'expected_delivery_on' => Carbon::now()->addDay()
+                ]);
+                event(new OrderShippedOn($order));
+            }
+        }
 	}
 
 	/**

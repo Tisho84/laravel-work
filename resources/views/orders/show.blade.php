@@ -19,10 +19,15 @@
                             <div class="col-md-6">Order status</div>
                             <b><div class="col-md-6">{{ $order->getStatus() }}</div></b>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">Ordered at</div>
-                            <div class="col-md-6">{{ $order->updated_at }}</div>
-                        </div>
+
+                        @if(count($dates))
+                            @foreach($dates as $date)
+                                <div class="row">
+                                    <div class="col-md-6">{{ $date['text'] }}</div>
+                                    <div class="col-md-6">{{ $date['date'] }}</div>
+                                </div>
+                            @endforeach
+                        @endif
                         <hr>
                         @if(Auth::user()->is_admin)
                             {!! Form::open(['route' => ['orders.update', $order->id], 'method' => 'put']) !!}

@@ -1,12 +1,19 @@
 <?php namespace App\Providers;
 
+use App\Events\OrderShippedOn;
 use App\Events\OrderWasCanceled;
+use App\Events\OrderWasDelivered;
 use App\Events\OrderWasPlaced;
+use App\Events\OrderWasProcessed;
 use App\Events\Registered;
 use App\Handlers\Events\ClientRegistration;
 use App\Handlers\Events\OrderAdminsConfirmation;
 use App\Handlers\Events\OrderClientCancel;
 use App\Handlers\Events\OrderClientConfirmation;
+use App\Handlers\Events\OrderShippedOnHandler;
+use App\Handlers\Events\OrderWasDeliveredAdminHandler;
+use App\Handlers\Events\OrderWasDeliveredClientHandler;
+use App\Handlers\Events\OrderWasProcessedHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -30,7 +37,17 @@ class EventServiceProvider extends ServiceProvider {
         ],
 		OrderWasCanceled::class => [
 			OrderClientCancel::class
-		]
+		],
+        OrderWasProcessed::class => [
+            OrderWasProcessedHandler::class
+        ],
+        OrderShippedOn::class => [
+            OrderShippedOnHandler::class
+        ],
+        OrderwasDelivered::class => [
+            OrderWasDeliveredClientHandler::class,
+            OrderWasDeliveredAdminHandler::class
+        ]
 	];
 
 	/**

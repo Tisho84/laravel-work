@@ -11,10 +11,11 @@
 |
 */
 
-use Illuminate\Support\Facades\Mail;
+use App\Order;
 
-Route::get('/test', function(){
-
+Route::get('/aa', function(){
+    $orders = Order::with('user', 'address')->where('status', 4)->where('expected_delivery_on', '<', \Carbon\Carbon::now())->get();
+    dd($orders);
 });
 
 Route::get('/', 'WelcomeController@index');

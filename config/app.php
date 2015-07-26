@@ -37,7 +37,7 @@ return [
     |
     */
 
-    'timezone'        => 'UTC',
+    'timezone'        => 'Europe/Sofia',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
