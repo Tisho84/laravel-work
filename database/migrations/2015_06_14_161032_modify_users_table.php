@@ -18,7 +18,7 @@ class ModifyUsersTable extends Migration {
             $table->string('last_name');
             $table->string('username')->unique();
             $table->string('phone', 12);
-            $table->boolean('active')->default(0);
+            $table->boolean('active')->default(1);
         });
     }
 

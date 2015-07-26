@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Events\Registered;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -41,7 +42,8 @@ class UsersController extends Controller
      */
     public function store(UserCreateRequest $request)
     {
-        User::create($request->all());
+        $user = User::create($request->all());
+        event(new Registered($user));
 
         return redirect('users');
     }

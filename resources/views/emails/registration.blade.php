@@ -1,1 +1,1 @@
-You registered successfully click here to login : {{ url('auth/login') }}
+You registered successfully username:{{ $username }} click here to login : {{ url('auth/login') }}

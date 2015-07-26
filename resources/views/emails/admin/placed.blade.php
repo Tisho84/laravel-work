@@ -1,1 +1,1 @@
-Hello, admin {{ $user->username }} order has made order ! Total amount is {{ $amount }}
+Hello, admin {{ $username }} has made order ! Total amount is {{ $amount }}
