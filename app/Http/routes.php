@@ -36,15 +36,18 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'UsersController@updateProfile'
     ]);
 
-    Route::resource('orders', 'OrdersController');
-    Route::resource('orders.address', 'AddressController');
-    Route::resource('orders.products', 'OrderProductsController');
-    
     Route::resource('products', 'ProductsController');
     Route::resource('categories', 'CategoriesController');
     Route::get('orders/{order}/cancel', ['as' => 'orders.cancel', 'uses' => 'OrdersController@cancel']);
 
     Route::group(['middleware' => 'isAdmin'], function(){
         Route::resource('users', 'UsersController');
+    });
+
+
+    Route::resource('orders', 'OrdersController'); #midleware isActive in construct
+    Route::group(['middleware' => 'isActive'], function(){
+        Route::resource('orders.address', 'AddressController');
+        Route::resource('orders.products', 'OrderProductsController');
     });
 });

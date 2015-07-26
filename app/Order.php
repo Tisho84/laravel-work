@@ -43,18 +43,6 @@ class Order extends Model {
         return $this->amount;
     }
 
-    public function isAuthorized($canEdit = true) #order belong to user and can be edited (admin can do all)
-    {
-        $flag = true;
-        if (!Auth::user()->is_admin) { #check if user has that order
-            $flag = Auth::user()->orders()->find($this->id)->first();
-            if ($flag && $canEdit) { #order is editable
-                $flag = $this->status == 1 ? true: false;
-            }
-        }
-        return $flag;
-    }
-
     public function setQuantity($increase)
     {
         $this->load('products');
@@ -66,5 +54,21 @@ class Order extends Model {
             }
             $product->update(['quantity' => $newQuantity]);
         }
+    }
+
+    public function canEdit()
+    {
+        if (Auth::user()->is_admin) {
+            return true;
+        }
+        return $this->status == 1 ? true: false;
+    }
+
+    public function canCancel()
+    {
+        if (Auth::user()->is_admin) {
+            return true;
+        }
+        return $this->status == 1 || $this->status == 2 || $this->status == 3 ? true : false; #if status is (Pending, Processed, Prepared) allow cancel
     }
 }

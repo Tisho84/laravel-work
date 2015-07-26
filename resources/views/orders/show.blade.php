@@ -69,12 +69,12 @@
                                     <div class="col-md-2 pull-right">
                                         Total - {{ $order->getAmount() }}
                                     </div>
-                                    @if($canEdit)
+                                    @if($order->canEdit())
                                         <div class="col-md-2">
                                             {!! Html::link(route('orders.edit', [$order->id]), 'Edit', ['class' => 'btn btn-default']) !!}
                                         </div>
                                     @endif
-                                    @if($canCancel)
+                                    @if($order->canCancel())
                                         <div class="col-md-2">
                                             {!! Html::link(route('orders.cancel', [$order->id]), 'Cancel', ['class' => 'btn btn-default']) !!}
                                         </div>
@@ -106,7 +106,7 @@
                                     <div class="col-md-6">Zip</div>
                                     <div class="col-md-6">{{ $order->address->zip }}</div>
                                 </div>
-                                @if($canEdit)
+                                @if($order->canEdit())
                                     <div class="row">
                                         <div class="col-md-6">
                                             {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'Edit', ['class' => 'btn btn-default']) !!}
@@ -114,11 +114,13 @@
                                     </div>
                                 @endif
                             @else
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        {!! Html::link(route('orders.address.create', [$order->id]), 'Add', ['class' => 'btn btn-small btn-primary']) !!}
+                                @if($order->canEdit())
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {!! Html::link(route('orders.address.create', [$order->id]), 'Add', ['class' => 'btn btn-small btn-primary']) !!}
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
                         </div>
                     </div>

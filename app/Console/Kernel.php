@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands = [
 		'App\Console\Commands\Inspire',
-        'App\Console\Commands\ProcessOrder'
+        'App\Console\Commands\ProcessOrder',
+        'App\Console\Commands\TravelOrder'
 	];
 
 	/**
@@ -23,8 +24,10 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected function schedule(Schedule $schedule)
 	{
-		$schedule->command('inspire')
-				 ->hourly();
-	}
+//		$schedule->command('inspire')
+//				 ->hourly();
+        $schedule->command('orders:processed')->everyFiveMinutes();//hourly();
+        $schedule->command('orders:travel')->everyFiveMinutes();
+    }
 
 }

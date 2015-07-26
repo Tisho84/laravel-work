@@ -1,25 +1,24 @@
 <?php namespace App\Console\Commands;
 
-use App\Category;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ProcessOrder extends Command {
+class TravelOrder extends Command {
 
 	/**
 	 * The console command name.
 	 *
 	 * @var string
 	 */
-	protected $name = 'orders:processed';
+	protected $name = 'orders:travel';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Update orders from pending to processed.';
+	protected $description = 'Command description.';
 
 	/**
 	 * Create a new command instance.
@@ -38,7 +37,7 @@ class ProcessOrder extends Command {
 	 */
 	public function fire()
 	{
-		Category::create(['name' => 'test', 'description' => 'test']);
+        Category::create(['name' => 'test2', 'description' => 't2est']);
 	}
 
 	/**

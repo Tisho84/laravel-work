@@ -26,6 +26,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $fillable = ['first_name', 'last_name', 'username', 'phone', 'email', 'password', 'active'];
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany('App\Order');
+    }
+
+    /**
+     *  User is authorized to see order
+     */
+    public function isAuthorized(Order $order) #order belong to
+    {
+        $flag = true;
+        if (!$this->is_admin) { #check if user has that order
+            $flag = $this->orders()->find($order->id);
+            if( $flag ) {
+                return $flag->first();
+            }
+        }
+        return $flag;
+    }
+
+    /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
@@ -47,13 +70,5 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if (!empty($value)) {
             return $this->attributes['password'] = Hash::make($value);
         }
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function orders()
-    {
-        return $this->hasMany('App\Order');
     }
 }

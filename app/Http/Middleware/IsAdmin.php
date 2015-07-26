@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class IsAdmin {
     protected $auth;
+
     /**
 	 * Create a new filter instance.
 	 *

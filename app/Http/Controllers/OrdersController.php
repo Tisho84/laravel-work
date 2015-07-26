@@ -21,7 +21,13 @@ use Illuminate\Support\Facades\Input;
 
 class OrdersController extends Controller
 {
+    protected $user;
 
+    public function __construct()
+    {
+        $this->middleware('isActive', ['except' => ['index', 'show']]);
+        $this->user = Auth::user();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -31,8 +37,7 @@ class OrdersController extends Controller
     {
         $view = 'orders.index';
         $statuses = [];
-        $user = Auth::user();
-        if ($user->is_admin) {
+        if ($this->user->is_admin) {
             $statuses = OrderStatus::$statuses;
             if (Input::get('status')) {
                 $orders = Order::where('status', Input::get('status'))->with('user', 'products')->get();
@@ -42,9 +47,9 @@ class OrdersController extends Controller
         } else {
             $view .= '_client';
             if (!Input::get('status')) {
-                $orders = $user->orders()->with('products')->get();
+                $orders = $this->user->orders()->with('products')->get();
             } else {
-                $orders = $user->orders()->where('status', Input::get('status'))->with('products')->get();
+                $orders = $this->user->orders()->where('status', Input::get('status'))->with('products')->get();
             }
         }
         return view($view, compact('orders', 'statuses'));
@@ -56,10 +61,6 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        if(!Auth::user()->active) {
-            return redirect()->back()->with('error', 'You cant shop from our store(not active)');
-        }
-
         $selectedProducts = [];
         if (session()->has('products')) {
             $selectedProducts = session()->pull('products');;
@@ -85,9 +86,6 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
-        if(!Auth::user()->active) {
-            return redirect()->back()->with('error', 'You cant shop from our store(not active)');
-        }
         $product = $request->get('product');
         $quantity = $request->get('quantity');
         $data = [];
@@ -119,7 +117,7 @@ class OrdersController extends Controller
             return redirect()->back()->withErrors($errors)->with('products', $data);
         }
 
-        DB::transaction(function() use ($data){ #quantity is reduced when order status is changed
+        DB::transaction(function() use ($data){
             $newData = [];
             foreach ($data as $value) {
                 $newData[$value['product_id']] = ['quantity' => $value['quantity']];
@@ -130,7 +128,8 @@ class OrdersController extends Controller
                 'address_id' => null,
             ]);
             $order->products()->attach($newData);
-            event(new OrderWasPlaced(Auth::user(), $order));
+            $order->setQuantity($increase = false);
+            event(new OrderWasPlaced($this->user, $order));
         });
         return redirect(route('orders.index'))->with('success', 'Order successful created');
     }
@@ -140,7 +139,7 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        if (!$order->isAuthorized()) {
+        if (!$this->user->isAuthorized($order) || !$order->canEdit()) {
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $order->load('products', 'products.category');
@@ -152,25 +151,14 @@ class OrdersController extends Controller
      */
     public function update(Order $order)
     {
-        if (!$order->isAuthorized()) {
+        if (!$this->user->isAuthorized($order) || !$order->canEdit()) {
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $user = User::findOrFail(Input::get('user'));
         DB::transaction(function() use ($order, $user){
             $order->user()->associate($user)->save();
             if ($order->status != Input::get('status')) { #if status changed
-                $data = ['status' => Input::get('status')];
-                if ($order->status == 1) { #decrease
-                    $order->setQuantity(false);
-                } else if (Input::get('status') == 1) { #increase
-                    $order->setQuantity(true);
-                }
-
-                if (Input::get('status') == 2) {
-                   $data['processed_on'] = Carbon::now();
-                }
-
-                $order->update($data);
+                $order->update(['status' => Input::get('status')]);
             }
         });
 
@@ -184,24 +172,18 @@ class OrdersController extends Controller
      */
     public function show(Order $order)
     {
-        if(!$order->isAuthorized($canEdit = false)){
+        if (!$this->user->isAuthorized($order)) {
             return redirect(route('orders.index'))->with('error', 'Order not found.');
         }
 
         $users = array();
-        if (Auth::user()->is_admin) {
+        if ($this->user->is_admin) {
             $users = User::lists('username', 'id');
         }
 
         $order->load('user', 'products', 'products.category');
-        $canEdit = $order->status == 1 ? true : false;
-        $canCancel = $order->status == 2 || $order->status == 3? true : false; #if status is (Processed, Prepared) allow cancel
-        if (Auth::user()->is_admin) {
-            $canEdit = true;
-            $canCancel = true;
-        }
         $statuses = OrderStatus::$statuses;
-        return view('orders.show', compact('order', 'canEdit', 'users', 'statuses', 'canCancel'));
+        return view('orders.show', compact('order', 'users', 'statuses'));
     }
 
     /**
@@ -211,41 +193,31 @@ class OrdersController extends Controller
      */
     public function destroy(Order $order)
     {
-        if (!$order->isAuthorized()) {
+        if (!$this->user->isAuthorized($order)) {
             return redirect()->back()->with('error', 'Order not deleted.');
         }
-
-        if ($order->status == 1) {
+        DB::transaction(function() use ($order) {
+            $order->setQuantity(true);
             $order->delete();
-        } else if (Auth::user()->is_admin && $order->status != 1) {
-            $products = $order->products()->get();
-            DB::transaction(function() use ($products, $order) {
-                foreach ($products as $product) { #increase quantity if status != 1
-                    $product->update(['quantity' => $product->quantity + $product->pivot->quantity]);
-                }
-                $order->delete();
-            });
-        }
+        });
         return redirect()->back()->with('success', 'Order deleted.');
     }
 
     public function cancel($orderId)
     {
         $order = Order::findOrFail($orderId);
-        if (!$order->isAuthorized(false)) {
+        if (!$this->user->isAuthorized($order)) {
             return redirect()->back()->with('error', 'Order not canceled u don\'t have permissions.');
         }
-        $return = $order->status != 2 && $order->status != 3 ? true: false; #if status is (Processed, Prepared) allow cancel)
 
-        $return = Auth::user()->is_admin || !$return ? false: true; #if admin pass to cancel
+        $return = $order->canCancel();//$order->status != 1 && $order->status != 2 && $order->status != 3 ? true: false; #if status is (New,Processed, Prepared) allow cancel)
 
-        if($return || $order->status == 1 || $order->status == 100) {
+        if(!$return || $order->status == 100) {
             return redirect()->back()->with('error', 'Order can\'t be canceled.');
         }
 
         DB::transaction(function () use ($order) {
             $order->update(['status' => 100]); #update order to canceled
-            $order->setQuantity($increase = true); #increase products quantity
         });
 
         return redirect(route('orders.index'))->with('success', 'Order was canceled');
