@@ -78,12 +78,12 @@
                                     <div class="col-md-2 pull-right">
                                         Total - {{ $order->getAmount() }}
                                     </div>
-                                    @if($order->canEdit())
+                                    @if(canEdit($order))
                                         <div class="col-md-2">
                                             {!! Html::link(route('orders.edit', [$order->id]), 'Edit', ['class' => 'btn btn-default']) !!}
                                         </div>
                                     @endif
-                                    @if($order->canCancel())
+                                    @if(canCancel($order))
                                         <div class="col-md-2">
                                             {!! Html::link(route('orders.cancel', [$order->id]), 'Cancel', ['class' => 'btn btn-default']) !!}
                                         </div>
@@ -115,7 +115,7 @@
                                     <div class="col-md-6">Zip</div>
                                     <div class="col-md-6">{{ $order->address->zip }}</div>
                                 </div>
-                                @if($order->canEdit())
+                                @if(canEditAddress($order))
                                     <div class="row">
                                         <div class="col-md-6">
                                             {!! Html::link(route('orders.address.edit', [$order->id, $order->address->id]), 'Edit', ['class' => 'btn btn-default']) !!}
@@ -123,7 +123,7 @@
                                     </div>
                                 @endif
                             @else
-                                @if($order->canEdit())
+                                @if(canEditAddress($order))
                                     <div class="row">
                                         <div class="col-md-6">
                                             {!! Html::link(route('orders.address.create', [$order->id]), 'Add', ['class' => 'btn btn-small btn-primary']) !!}
@@ -140,11 +140,11 @@
                                     {!! Form::open(['route' => ['orders.payment', $order], 'method' => 'post']) !!}
                                         <script
                                             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                            data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                                            data-key="{{ config('services.stripe.publish') }}"
                                             data-amount="{{ $order->getStripeAmount() }}"
                                             data-name="Order"
                                             data-description="{{ count($order->products) }} items {{ $order->getStripeAmount() }}"
-                                            data-email="{{ Auth::user()->email  }}">
+                                            data-email="{{ $order->user->email }}">
                                         </script>
                                     {!! Form::close() !!}
                                 </div>

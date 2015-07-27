@@ -32,6 +32,7 @@ return [
 	'stripe' => [
 		'model'  => 'App\User',
 		'secret' => env('STRIPE_KEY'),
+        'publish' => env('PUBLISH_STRIPE_KEY')
 	],
 
 ];

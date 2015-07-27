@@ -7,11 +7,9 @@ use Illuminate\Support\Facades\Auth;
 
 class Order extends Model {
 
-    protected $fillable = ['user_id', 'processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status', 'address_id'];
+    protected $fillable = ['user_id', 'processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'status', 'address_id', 'is_paid'];
 
     protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'created_at', 'updated_at'];
-
-    protected $guarded = ['is_paid'];
 
     public function user()
     {
@@ -61,9 +59,8 @@ class Order extends Model {
             foreach($this->products as $product) {
                 $amount += $product->price * $product->pivot->quantity;
             }
-            $this->amount = $amount;
         }
-        return $this->amount;
+        return $amount;
     }
 
     public function getStripeAmount()
@@ -82,21 +79,5 @@ class Order extends Model {
             }
             $product->update(['quantity' => $newQuantity]);
         }
-    }
-
-    public function canEdit()
-    {
-        if (Auth::user()->is_admin) {
-            return true;
-        }
-        return $this->status == 1 ? true: false;
-    }
-
-    public function canCancel()
-    {
-        if (Auth::user()->is_admin) {
-            return true;
-        }
-        return $this->status == 1 || $this->status == 2 || $this->status == 3 ? true : false; #if status is (Pending, Processed, Prepared) allow cancel
     }
 }

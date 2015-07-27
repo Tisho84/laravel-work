@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Stripe\Customer;
+use Stripe\Object;
 
 class OrdersController extends Controller
 {
@@ -145,7 +147,7 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        if (!$this->user->isAuthorized($order) || !$order->canEdit()) {
+        if (!$this->user->isAuthorized($order) || !canEdit($order)) {
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $order->load('products', 'products.category');
@@ -158,7 +160,7 @@ class OrdersController extends Controller
      */
     public function update(Order $order)
     {
-        if (!$this->user->isAuthorized($order) || !$order->canEdit()) {
+        if (!$this->user->isAuthorized($order) || !canEdit($order)) {
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $user = User::findOrFail(Input::get('user'));
@@ -223,7 +225,7 @@ class OrdersController extends Controller
             return redirect()->back()->with('error', 'Order not canceled u don\'t have permissions.');
         }
 
-        $return = $order->canCancel();
+        $return = canCancel($order);
 
         if (!$return || $order->status == 100) {
             return redirect()->back()->with('error', 'Order can\'t be canceled.');
@@ -240,14 +242,35 @@ class OrdersController extends Controller
 
     public function payment(Order $order)
     {
-//        if ($this->user->email == $order->user->email) {
+        if ($this->user->email != $order->user->email) {
+            return redirect()->back()->with('error', 'You can\'t pay this order is not yours');
+        }
 
-//        $this->user->update(['stripe_id' => Input::get('stripeToken')]);
-        $this->user->charge(10000, [
-            'source' => Input::get('stripeToken'),
-            'receipt_email' => $this->user->email
+        $customer = new Object();
+        if (!$order->user->hasStripeId()) { #Create a Customer
+            $customer = Customer::create([
+                'source' => Input::get('stripeToken'),
+                'description' => 'Simple orders charge',
+                'email' => $order->user->email,
+            ]);
+
+            $order->user->setStripeIsActive()
+                ->setStripeId($customer->id)
+                ->save();
+        } else {
+            $customer->id = $order->user->getStripeId();
+        }
+
+        $charge = $order->user->charge($order->getStripeAmount(), [
+            'customer' => $customer->id,
+            'currency' => 'usd'
         ]);
-//        }
-//        $this->user->subscripbed()->create()
+
+        if (!$charge) {
+            return redirect()->back()->with('error', 'Card was declined');
+        }
+        $order->update(['is_paid' => 1]);
+
+        return redirect(route('orders.show', [$order->id]))->with('success', 'Payment was accepted.');
     }
 }

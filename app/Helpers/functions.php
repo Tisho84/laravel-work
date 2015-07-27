@@ -12,6 +12,7 @@
 use App\Events\OrderShippedOn;
 use App\Events\OrderWasDelivered;
 use App\Events\OrderWasProcessed;
+use App\Order;
 use App\User;
 use Carbon\Carbon;
 
@@ -81,6 +82,27 @@ function updateStatus($order, $newStatus) { #used when updating order info
     }
 
     return $data;
+}
+
+function canEdit(Order $order) {
+    if (Auth::user()->is_admin) {
+        return true;
+    }
+    return $order->status == 1 && !$order->is_paid ? true: false;
+}
+
+function canCancel(Order $order) {
+    if (Auth::user()->is_admin) {
+        return true;
+    }
+    return ($order->status == 1 || $order->status == 2 || $order->status == 3) && !$order->is_paid ? true : false; #if status is (Pending, Processed, Prepared) allow cancel
+}
+
+function canEditAddress(Order $order) {
+    if (Auth::user()->is_admin) {
+        return true;
+    }
+    return $order->status == 1 ? true : false;
 }
 
 

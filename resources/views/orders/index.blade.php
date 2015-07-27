@@ -27,6 +27,7 @@
                                     <th>Products</th>
                                     <th>Amount</th>
                                     <th>Status</th>
+                                    <th>Paid</th>
                                     <th>Ordered on</th>
                                 </tr>
                             </thead>
@@ -43,6 +44,7 @@
                                         </td>
                                         <td>{{ $order->getAmount() }}</td>
                                         <td>{{ $order->getStatus() }}</td>
+                                        <td>{{ $order->is_paid ? 'Yes': 'No' }}</td>
                                         <td>{{ $order->updated_at->diffForHumans() }}</td>
                                         <td>
                                             {!! Form::open(['url' => "orders/{$order->id}", 'method' => 'delete']) !!}

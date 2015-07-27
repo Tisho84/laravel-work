@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Stripe\Customer;
 
 class UsersController extends Controller
 {
@@ -102,11 +103,15 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         try {
+            $customer = Customer::retrieve($user->getStripeId());
             $user->delete();
         } catch(QueryException $e) {
             return redirect('users')->with('error', 'Cant delete this user has orders');
         }
 
+        if ($customer) { #delete customer stripe account
+            $customer->delete();
+        }
         return redirect('users');
     }
 

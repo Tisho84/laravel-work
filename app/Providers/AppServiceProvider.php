@@ -1,8 +1,10 @@
 <?php namespace App\Providers;
 
 use App\Category;
+use App\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Stripe\Stripe;
 
 class AppServiceProvider extends ServiceProvider {
 
@@ -15,6 +17,10 @@ class AppServiceProvider extends ServiceProvider {
 	{
         if (Schema::hasTable('categories')) {
             view()->share('nav_categories', Category::active()->get());
+        }
+
+        if (Schema::hasTable('users')) {
+            Stripe::setApiKey(config('services.stripe.secret'));
         }
 	}
 
