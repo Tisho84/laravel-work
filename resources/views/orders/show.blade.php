@@ -28,6 +28,10 @@
                                 </div>
                             @endforeach
                         @endif
+                        <div class="row">
+                            <div class="col-md-6">Paid</div>
+                            <div class="col-md-6">{{ $order->is_paid ? 'Yes': 'No' }}</div>
+                        </div>
                         <hr>
                         @if(Auth::user()->is_admin)
                             {!! Form::open(['route' => ['orders.update', $order->id], 'method' => 'put']) !!}
@@ -128,19 +132,24 @@
                                 @endif
                             @endif
                         </div>
-                        <hr>
-                        <div class="row-md">
-                            <div>Payment:</div>
-                            {!! Form::open(['route' => ['orders.payment', $order], 'method' => 'post']) !!}
-                                <script
-                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                    data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-                                    data-amount="{{ $order->getStripeAmount() }}"
-                                    data-name="Order"
-                                    data-description="{{ count($order->products) }} items {{ $order->getStripeAmount() }}">
-                                </script>
-                            {!! Form::close() !!}
-                        </div>
+                        @if(!$order->is_paid)
+                            <hr>
+                            <div class="row-md">
+                                <div>Payment:</div>
+                                <div>
+                                    {!! Form::open(['route' => ['orders.payment', $order], 'method' => 'post']) !!}
+                                        <script
+                                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                            data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                                            data-amount="{{ $order->getStripeAmount() }}"
+                                            data-name="Order"
+                                            data-description="{{ count($order->products) }} items {{ $order->getStripeAmount() }}"
+                                            data-email="{{ Auth::user()->email  }}">
+                                        </script>
+                                    {!! Form::close() !!}
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -217,9 +217,8 @@ class OrdersController extends Controller
         return redirect()->back()->with('success', 'Order deleted.');
     }
 
-    public function cancel($orderId)
+    public function cancel(Order $order)
     {
-        $order = Order::findOrFail($orderId);
         if (!$this->user->isAuthorized($order)) {
             return redirect()->back()->with('error', 'Order not canceled u don\'t have permissions.');
         }
@@ -241,6 +240,14 @@ class OrdersController extends Controller
 
     public function payment(Order $order)
     {
-        dd($order);
+//        if ($this->user->email == $order->user->email) {
+
+//        $this->user->update(['stripe_id' => Input::get('stripeToken')]);
+        $this->user->charge(10000, [
+            'source' => Input::get('stripeToken'),
+            'receipt_email' => $this->user->email
+        ]);
+//        }
+//        $this->user->subscripbed()->create()
     }
 }
