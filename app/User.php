@@ -5,12 +5,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Laravel\Cashier\Billable;
+use Laravel\Cashier\Contracts\Billable as BillableContract;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, BillableContract
 {
-
-    use Authenticatable, CanResetPassword;
+    use Authenticatable, CanResetPassword, Billable;
 
     /**
      * The database table used by the model.
@@ -24,6 +25,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var array
      */
     protected $fillable = ['first_name', 'last_name', 'username', 'phone', 'email', 'password', 'active'];
+
+    /**
+     * @var dates
+     */
+    protected $dates = ['trial_ends_at', 'subscription_ends_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

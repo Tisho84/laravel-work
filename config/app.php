@@ -139,6 +139,7 @@ return [
         'Barryvdh\Debugbar\ServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
         'App\Providers\HelperServiceProvider',
+        'Laravel\Cashier\CashierServiceProvider',
     ],
     /*
     |--------------------------------------------------------------------------

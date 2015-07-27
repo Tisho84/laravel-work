@@ -29,6 +29,7 @@ class OrdersController extends Controller
         $this->middleware('isActive', ['except' => ['index', 'show']]);
         $this->user = Auth::user();
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -53,8 +54,10 @@ class OrdersController extends Controller
                 $orders = $this->user->orders()->where('status', Input::get('status'))->with('products')->get();
             }
         }
+
         return view($view, compact('orders', 'statuses'));
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -67,16 +70,17 @@ class OrdersController extends Controller
             $selectedProducts = session()->pull('products');;
         }
 
-        $select = [ 0 => '-- Select --' ];
+        $select = [0 => '-- Select --'];
         $productsModel = Product::sell()->get();
         $products = [];
         foreach ($productsModel as $product) {
             $products[$product->id] = $product->name . ' - price ' . $product->price;
         }
         if (Input::get('product') && empty($selectedProducts)) { #product clicked from link
-            $selectedProducts[] = [ 'product_id' => Input::get('product'), 'quantity' => 1 ];
+            $selectedProducts[] = ['product_id' => Input::get('product'), 'quantity' => 1];
         }
         $products = $select + $products;
+
         return view('orders.create', compact('products', 'selectedProducts'));
     }
 
@@ -118,7 +122,7 @@ class OrdersController extends Controller
             return redirect()->back()->withErrors($errors)->with('products', $data);
         }
 
-        DB::transaction(function() use ($data){
+        DB::transaction(function () use ($data) {
             $newData = [];
             foreach ($data as $value) {
                 $newData[$value['product_id']] = ['quantity' => $value['quantity']];
@@ -132,6 +136,7 @@ class OrdersController extends Controller
             $order->setQuantity($increase = false);
             event(new OrderWasPlaced($this->user, $order));
         });
+
         return redirect(route('orders.index'))->with('success', 'Order successful created');
     }
 
@@ -144,6 +149,7 @@ class OrdersController extends Controller
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $order->load('products', 'products.category');
+
         return view('orders.edit', compact('order'));
     }
 
@@ -156,7 +162,7 @@ class OrdersController extends Controller
             return redirect(route('orders.index', [$order->id]))->with('error', 'You can\'t edit that order');
         }
         $user = User::findOrFail(Input::get('user'));
-        DB::transaction(function() use ($order, $user){
+        DB::transaction(function () use ($order, $user) {
             $order->user()->associate($user)->save();
             $oldStatus = $order->status;
             $newStatus = Input::get('status');
@@ -189,6 +195,7 @@ class OrdersController extends Controller
         $order->load('user', 'products', 'products.category');
         $statuses = OrderStatus::$statuses;
         $dates = showOrderDates($order);
+
         return view('orders.show', compact('order', 'users', 'statuses', 'dates'));
     }
 
@@ -202,10 +209,11 @@ class OrdersController extends Controller
         if (!$this->user->isAuthorized($order)) {
             return redirect()->back()->with('error', 'Order not deleted.');
         }
-        DB::transaction(function() use ($order) {
+        DB::transaction(function () use ($order) {
             $order->setQuantity(true);
             $order->delete();
         });
+
         return redirect()->back()->with('success', 'Order deleted.');
     }
 
@@ -218,7 +226,7 @@ class OrdersController extends Controller
 
         $return = $order->canCancel();
 
-        if(!$return || $order->status == 100) {
+        if (!$return || $order->status == 100) {
             return redirect()->back()->with('error', 'Order can\'t be canceled.');
         }
 
@@ -229,6 +237,10 @@ class OrdersController extends Controller
         });
 
         return redirect(route('orders.index'))->with('success', 'Order was canceled');
+    }
 
+    public function payment(Order $order)
+    {
+        dd($order);
     }
 }

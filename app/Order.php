@@ -11,6 +11,8 @@ class Order extends Model {
 
     protected $dates = ['processed_on', 'shipped_on', 'expected_delivery_on', 'delivered_on', 'created_at', 'updated_at'];
 
+    protected $guarded = ['is_paid'];
+
     public function user()
     {
         return $this->belongsTo('App\User');
@@ -62,6 +64,11 @@ class Order extends Model {
             $this->amount = $amount;
         }
         return $this->amount;
+    }
+
+    public function getStripeAmount()
+    {
+        return $this->getAmount() * 100;
     }
 
     public function setQuantity($increase)

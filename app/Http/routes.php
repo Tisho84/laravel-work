@@ -14,8 +14,7 @@
 use App\Order;
 
 Route::get('/aa', function(){
-    $orders = Order::with('user', 'address')->where('status', 4)->where('expected_delivery_on', '<', \Carbon\Carbon::now())->get();
-    dd($orders);
+
 });
 
 Route::get('/', 'WelcomeController@index');
@@ -40,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('products', 'ProductsController');
     Route::resource('categories', 'CategoriesController');
     Route::get('orders/{order}/cancel', ['as' => 'orders.cancel', 'uses' => 'OrdersController@cancel']);
+    Route::post('orders/{orders}', ['as' => 'orders.payment', 'uses' => 'OrdersController@payment']);
 
     Route::group(['middleware' => 'isAdmin'], function(){
         Route::resource('users', 'UsersController');

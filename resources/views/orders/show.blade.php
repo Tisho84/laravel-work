@@ -17,7 +17,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">Order status</div>
-                            <b><div class="col-md-6">{{ $order->getStatus() }}</div></b>
+                           <div class="col-md-6"> <b>{{ $order->getStatus() }}</b></div>
                         </div>
 
                         @if(count($dates))
@@ -128,7 +128,19 @@
                                 @endif
                             @endif
                         </div>
-                    </div>
+                        <hr>
+                        <div class="row-md">
+                            <div>Payment:</div>
+                            {!! Form::open(['route' => ['orders.payment', $order], 'method' => 'post']) !!}
+                                <script
+                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                    data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                                    data-amount="{{ $order->getStripeAmount() }}"
+                                    data-name="Order"
+                                    data-description="{{ count($order->products) }} items {{ $order->getStripeAmount() }}">
+                                </script>
+                            {!! Form::close() !!}
+                        </div>
                     </div>
                 </div>
             </div>
